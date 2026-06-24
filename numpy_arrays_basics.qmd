@@ -1,0 +1,333 @@
+---
+title: "Mastering NumPy and Base R"
+
+author: "Geethma Jayasinghe"
+format:
+  html:
+    theme: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-copy: true
+    code-fold: show
+---
+
+# The Basics of NumPy Arrays
+
+Data manipulation in Python is nearly synonymous with NumPy array manipulation: even newer tools like Pandas are built around the NumPy array. This section will present several examples using NumPy array manipulation.
+We'll cover a few categories of basic array manipulations here:
+
+*Attributes of arrays*
+:   Determining the size, shape, memory consumption, and data types of arrays
+
+*Indexing of arrays*
+:   Getting and setting the value of individual array elements
+
+*Slicing of arrays*
+:   Getting and setting smaller subarrays within a larger array
+
+*Reshaping of arrays*
+:   Changing the shape of a given array
+
+*Joining and splitting of arrays*
+:   Combining multiple arrays into one, and splitting one array into many
+
+---
+
+# NumPy Array Attributes
+
+First let's discuss some useful array attributes.
+
+::: {.panel-tabset}
+
+## NumPy (Python)
+
+```{python}
+import numpy as np
+
+np.random.seed(0)
+
+x1 = np.random.randint(10, size=6)
+x2 = np.random.randint(10, size=(3, 4))
+x3 = np.random.randint(10, size=(3, 4, 5))
+```
+
+Each array has attributes `ndim`, `shape`, and `size`.
+
+```{python}
+print("x3 ndim:", x3.ndim)
+print("x3 shape:", x3.shape)
+print("x3 size:", x3.size)
+```
+
+### What Happened?
+
+- `ndim` — number of dimensions
+- `shape` — size of each dimension
+- `size` — total number of elements
+- `dtype` — data type of elements
+- `itemsize` — bytes per element
+- `nbytes` — total memory used
+
+## Base R
+
+```{r}
+set.seed(0)
+
+x1 <- sample(0:9, 6, replace = TRUE)
+x2 <- matrix(sample(0:9, 12, replace = TRUE),
+             nrow = 3,
+             ncol = 4)
+
+x3 <- array(sample(0:9, 60, replace = TRUE),
+            dim = c(3, 4, 5))
+```
+
+```{r}
+cat("ndim:", length(dim(x3)), "\n")
+cat("shape:", dim(x3), "\n")
+cat("size:", length(x3), "\n")
+```
+
+:::
+# Array Indexing: Accessing Single Elements
+
+If you are familiar with Python's standard list indexing, indexing in NumPy will feel quite familiar. In a one-dimensional array, you can access the $i$th value (counting from zero) by specifying the desired index in square brackets, just as with Python lists.
+
+::: {.panel-tabset}
+
+## NumPy (Python)
+
+```{python}
+x1
+```
+
+```{python}
+x1[0]
+```
+
+```{python}
+x1[4]
+```
+
+
+## Base R
+
+```{r}
+x1[1]   # first element (R is 1-based!)
+```
+
+```{r}
+x1[5]   # fifth element
+```
+
+```{r}
+x1[length(x1)]  # last element
+```
+:::
+
+---
+
+# Array Slicing: Accessing Subarrays
+
+Just as we can use square brackets to access individual array elements, we can also use them to access subarrays with the *slice* notation, marked by the colon (`:`) character. The NumPy slicing syntax follows that of the standard Python list; to access a slice of an array `x`, use this:
+
+```
+x[start:stop:step]
+```
+
+If any of these are unspecified, they default to the values `start=0`, `stop=size of dimension`, `step=1`. We'll take a look at accessing subarrays in one dimension and in multiple dimensions.
+
+## One-dimensional subarrays
+
+::: {.panel-tabset}
+
+## NumPy (Python)
+
+```{python}
+x = np.arange(10)
+x
+```
+
+```{python}
+x[:5]   # first five elements
+```
+
+```{python}
+x[5:]   # elements after index 5
+```
+
+```{python}
+x[4:7]  # middle subarray
+```
+
+```{python}
+x[::2]  # every other element
+```
+
+## Base R
+
+```{r}
+x <- 0:9
+x
+```
+
+```{r}
+x[1:5]               # first five elements (1-based)
+```
+
+```{r}
+x[6:length(x)]       # elements after position 5
+```
+
+```{r}
+x[5:7]               # middle subarray
+```
+
+```{r}
+x[seq(1, 10, by = 2)]  # every other element
+```
+
+```{r}
+rev(x)               # all elements, reversed
+```
+
+:::
+
+## Multidimensional subarrays
+
+Multidimensional slices work in the same way, with multiple slices separated by commas.
+
+::: {.panel-tabset}
+
+## NumPy (Python)
+
+```{python}
+x2
+```
+
+```{python}
+x2[:2, :3]   # two rows, three columns
+```
+
+
+## Base R
+
+```{r}
+x2[1:2, 1:3]   # two rows, three columns
+```
+
+```{r}
+x2[, 1]        # first column (all rows)
+```
+
+```{r}
+x2[1, ]        # first row (all columns)
+```
+
+:::
+
+---
+
+---
+
+# Reshaping of Arrays
+
+Another useful type of operation is reshaping of arrays. The most flexible way of doing this is with the `reshape()` method. For example, if you want to put the numbers 1 through 9 in a 3×3 grid, you can do the following.
+
+Note that for this to work, the size of the initial array must match the size of the reshaped array. Where possible, the `reshape` method will use a no-copy view of the initial array, but with noncontiguous memory buffers this is not always the case.
+
+::: {.panel-tabset}
+
+## NumPy (Python)
+
+```{python}
+grid = np.arange(1, 10).reshape((3, 3))
+print(grid)
+```
+
+### What Happened?
+
+- `reshape((3,3))` converts a 1-D array into a 3×3 matrix.
+- The total number of elements must remain unchanged.
+- NumPy attempts to avoid copying data whenever possible.
+
+## Base R
+
+```{r}
+grid <- matrix(1:9, nrow = 3, byrow = TRUE)
+print(grid)
+```
+
+### R Equivalent
+
+- `matrix()` is the most common way to reshape vectors into matrices.
+- The total number of elements must match the target dimensions.
+
+:::
+
+---
+
+# Array Concatenation
+
+All of the preceding routines worked on single arrays. It's also possible to combine multiple arrays into one, and to conversely split a single array into multiple arrays.
+
+## Concatenation of arrays
+
+Concatenation, or joining of two arrays in NumPy, is primarily accomplished through the routines `np.concatenate`, `np.vstack`, and `np.hstack`. `np.concatenate` takes a tuple or list of arrays as its first argument.
+
+::: {.panel-tabset}
+
+## NumPy (Python)
+
+```{python}
+x = np.array([1, 2, 3])
+y = np.array([3, 2, 1])
+np.concatenate([x, y])
+```
+
+You can also concatenate more than two arrays at once:
+
+```{python}
+z = [99, 99, 99]
+print(np.concatenate([x, y, z]))
+```
+
+`np.concatenate` can also be used for two-dimensional arrays:
+
+```{python}
+grid = np.array([[1, 2, 3],
+                 [4, 5, 6]])
+
+np.concatenate([grid, grid])
+```
+
+## Base R
+
+```{r}
+x <- c(1, 2, 3)
+y <- c(3, 2, 1)
+
+c(x, y)
+```
+
+```{r}
+z <- c(99, 99, 99)
+
+c(x, y, z)
+```
+
+```{r}
+grid <- matrix(c(1, 2, 3,
+                 4, 5, 6),
+               nrow = 2,
+               byrow = TRUE)
+
+rbind(grid, grid)
+```
+
+```{r}
+cbind(grid, grid)
+```
+
+:::

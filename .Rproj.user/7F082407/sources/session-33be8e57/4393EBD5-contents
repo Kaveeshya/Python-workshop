@@ -1,0 +1,882 @@
+---
+title: "Time Series Analysis: Classical Decomposition & ARIMA"
+subtitle: "Python vs R Comparison"
+author: "G. I. Hansamal"
+---
+
+# Introduction
+
+This document covers two foundational pillars of classical time series analysis — **decomposition** and **ARIMA modelling** — with side-by-side Python and R code throughout.
+
+> **Environment note:** Python chunks are executed live (via `jupyter: python3`). R equivalents are shown in fenced `r` blocks for reference. To run R, switch the YAML engine to `knitr` and rename `{python}` chunks to `{r}`.
+
+Topics covered:
+
+1. Setup & data
+2. Visualisation
+3. Classical decomposition (additive & multiplicative)
+4. STL decomposition
+5. Stationarity testing (ADF & KPSS)
+6. ACF & PACF
+7. ARIMA — theory, manual fitting, diagnostics
+8. Auto-ARIMA
+9. SARIMA — seasonal extension
+10. Forecasting & model comparison
+
+---
+
+# 1. Setup & Data
+
+## Python
+
+```{python}
+#| label: py-setup
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
+from statsmodels.tsa.stattools import adfuller, kpss
+from statsmodels.tsa.seasonal import seasonal_decompose, STL
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.stats.diagnostic import acorr_ljungbox
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from scipy.stats import probplot, norm
+
+plt.rcParams.update({
+    "figure.dpi": 120,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.grid": True,
+    "grid.alpha": 0.3,
+})
+
+print("Python ready.")
+```
+
+## R Equivalent
+
+```r
+# install.packages(c("forecast", "tseries", "ggplot2", "feasts", "tsibble"))
+library(forecast)   # ARIMA, auto.arima, ETS
+library(tseries)    # adf.test, kpss.test
+library(ggplot2)
+library(feasts)     # ACF, decomposition (tidyverts)
+library(tsibble)
+```
+
+## Simulated Dataset
+
+We simulate 10 years of monthly retail sales with trend, seasonality, and noise.
+
+```{python}
+#| label: py-data
+#| fig-cap: "Simulated monthly retail sales"
+
+np.random.seed(42)
+n = 120
+t = np.arange(n)
+
+trend    = 200 + 2.5 * t
+seasonal = 50 * np.sin(2 * np.pi * t / 12) + 20 * np.sin(2 * np.pi * t / 6)
+noise    = np.random.normal(0, 15, n)
+sales    = trend + seasonal + noise
+
+dates = pd.date_range(start="2014-01-01", periods=n, freq="MS")
+df = pd.DataFrame({"sales": sales}, index=dates)
+
+# Train / test split — hold out last 12 months
+train = df["sales"][:-12]
+test  = df["sales"][-12:]
+
+fig, ax = plt.subplots(figsize=(11, 4))
+ax.plot(df.index, df["sales"], linewidth=1.5, color="steelblue")
+ax.axvline(test.index[0], color="crimson", linestyle="--", label="Train / Test split")
+ax.set_title("Simulated Monthly Retail Sales", fontsize=14, fontweight="bold")
+ax.set_xlabel("Date")
+ax.set_ylabel("Sales (units)")
+ax.xaxis.set_major_locator(mdates.YearLocator())
+ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+ax.legend()
+plt.tight_layout()
+plt.show()
+
+print(df.describe().round(2))
+```
+
+## R Equivalent
+
+```r
+set.seed(42)
+n     <- 120
+t_seq <- 0:(n - 1)
+
+sales <- 200 + 2.5*t_seq +
+         50*sin(2*pi*t_seq/12) + 20*sin(2*pi*t_seq/6) +
+         rnorm(n, 0, 15)
+
+# Base ts object — used by forecast package
+ts_sales <- ts(sales, start = c(2014, 1), frequency = 12)
+
+train_r <- window(ts_sales, end   = c(2022, 12))
+test_r  <- window(ts_sales, start = c(2023,  1))
+
+plot(ts_sales, main = "Simulated Monthly Retail Sales",
+     ylab = "Sales", xlab = "Date", col = "steelblue")
+abline(v = 2023, col = "crimson", lty = 2)
+```
+
+---
+
+# 2. Visualisation
+
+## Rolling Statistics
+
+Rolling mean and standard deviation reveal non-stationarity: a rising mean confirms a trend, growing spread suggests heteroscedasticity.
+
+```{python}
+#| label: py-rolling
+#| fig-cap: "12-month rolling mean and standard deviation"
+
+roll_mean = df["sales"].rolling(12).mean()
+roll_std  = df["sales"].rolling(12).std()
+
+fig, axes = plt.subplots(2, 1, figsize=(11, 6), sharex=True)
+
+axes[0].plot(df.index, df["sales"],  alpha=0.5,  label="Observed",    color="steelblue")
+axes[0].plot(df.index, roll_mean,    linewidth=2, label="12-mo Mean",  color="crimson")
+axes[0].set_ylabel("Sales")
+axes[0].legend()
+axes[0].set_title("Rolling Statistics", fontsize=13, fontweight="bold")
+
+axes[1].plot(df.index, roll_std, color="darkorange", label="12-mo Std Dev")
+axes[1].set_ylabel("Std Dev")
+axes[1].legend()
+
+plt.tight_layout()
+plt.show()
+```
+
+## R Equivalent
+
+```r
+library(zoo)
+roll_mean <- rollmean(ts_sales, k = 12, fill = NA, align = "right")
+roll_sd   <- rollapply(ts_sales, width = 12, FUN = sd, fill = NA, align = "right")
+
+par(mfrow = c(2, 1), mar = c(3, 4, 2, 1))
+plot(ts_sales, col = "steelblue", ylab = "Sales", main = "Rolling Statistics")
+lines(roll_mean, col = "crimson", lwd = 2)
+legend("topleft", legend = c("Observed", "12-mo Mean"),
+       col = c("steelblue","crimson"), lty = 1)
+plot(roll_sd, col = "darkorange", ylab = "Std Dev")
+```
+
+## Seasonal Subseries Plot
+
+```{python}
+#| label: py-seasonal-plot
+#| fig-cap: "Seasonal subseries: each line is one year; dashed = monthly mean"
+
+ds = df.copy()
+ds["year"]  = ds.index.year
+ds["month"] = ds.index.month
+month_labels = ["Jan","Feb","Mar","Apr","May","Jun",
+                "Jul","Aug","Sep","Oct","Nov","Dec"]
+
+fig, ax = plt.subplots(figsize=(11, 4))
+for year, grp in ds.groupby("year"):
+    ax.plot(grp["month"], grp["sales"], alpha=0.45, marker="o",
+            markersize=3, label=str(year))
+
+monthly_means = ds.groupby("month")["sales"].mean()
+ax.plot(monthly_means.index, monthly_means.values,
+        color="black", linewidth=2.5, linestyle="--", label="Monthly mean")
+
+ax.set_xticks(range(1, 13))
+ax.set_xticklabels(month_labels)
+ax.set_xlabel("Month")
+ax.set_ylabel("Sales")
+ax.set_title("Seasonal Plot by Year", fontsize=13, fontweight="bold")
+ax.legend(ncol=6, fontsize=8)
+plt.tight_layout()
+plt.show()
+```
+
+## R Equivalent
+
+```r
+# forecast package
+seasonplot(ts_sales, year.labels = TRUE, main = "Seasonal Plot",
+           col = rainbow(10), year.labels.left = TRUE)
+
+# feasts / tidyverts
+library(tsibble); library(feasts); library(dplyr); library(lubridate)
+tsibble_sales <- data.frame(
+  month = yearmonth(seq(as.Date("2014-01-01"), by="month", length.out=120)),
+  sales = sales
+) |> as_tsibble(index = month)
+
+tsibble_sales |> gg_season(sales, labels = "both")
+```
+
+---
+
+# 3. Classical Decomposition
+
+Classical decomposition separates a series into **Trend (T)**, **Seasonal (S)**, and **Remainder (R)** components.
+
+| Model | Formula | When to use |
+|-------|---------|-------------|
+| Additive | $Y_t = T_t + S_t + R_t$ | Seasonal swings are roughly constant |
+| Multiplicative | $Y_t = T_t \times S_t \times R_t$ | Seasonal swings grow with the level |
+
+The trend is estimated with a centred moving average (order = period), then seasonality is averaged across years, and the remainder is what's left over.
+
+## 3.1 Additive Decomposition
+
+```{python}
+#| label: py-additive-decomp
+#| fig-cap: "Classical additive decomposition"
+
+decomp_add = seasonal_decompose(df["sales"], model="additive", period=12)
+
+fig, axes = plt.subplots(4, 1, figsize=(11, 10), sharex=True)
+parts = {
+    "Observed" : (decomp_add.observed,  "steelblue"),
+    "Trend"    : (decomp_add.trend,     "crimson"),
+    "Seasonal" : (decomp_add.seasonal,  "darkorange"),
+    "Residual" : (decomp_add.resid,     "purple"),
+}
+for ax, (label, (data, color)) in zip(axes, parts.items()):
+    ax.plot(data, color=color, linewidth=1.2)
+    ax.set_ylabel(label, fontsize=10)
+    if label == "Residual":
+        ax.axhline(0, linestyle="--", color="gray", alpha=0.5)
+
+axes[0].set_title("Classical Additive Decomposition", fontsize=13, fontweight="bold")
+plt.tight_layout()
+plt.show()
+```
+
+## R Equivalent
+
+```r
+decomp_add <- decompose(ts_sales, type = "additive")
+plot(decomp_add)
+
+# Access components
+decomp_add$trend
+decomp_add$seasonal
+decomp_add$random
+```
+
+## 3.2 Multiplicative Decomposition
+
+```{python}
+#| label: py-multiplicative-decomp
+#| fig-cap: "Classical multiplicative decomposition"
+
+decomp_mult = seasonal_decompose(df["sales"], model="multiplicative", period=12)
+
+fig, axes = plt.subplots(4, 1, figsize=(11, 10), sharex=True)
+parts_m = {
+    "Observed" : (decomp_mult.observed,  "steelblue"),
+    "Trend"    : (decomp_mult.trend,     "crimson"),
+    "Seasonal" : (decomp_mult.seasonal,  "darkorange"),
+    "Residual" : (decomp_mult.resid,     "purple"),
+}
+for ax, (label, (data, color)) in zip(axes, parts_m.items()):
+    ax.plot(data, color=color, linewidth=1.2)
+    ax.set_ylabel(label, fontsize=10)
+    if label == "Residual":
+        ax.axhline(1, linestyle="--", color="gray", alpha=0.5)  # residual ~ 1 in multiplicative
+
+axes[0].set_title("Classical Multiplicative Decomposition", fontsize=13, fontweight="bold")
+plt.tight_layout()
+plt.show()
+```
+
+## R Equivalent
+
+```r
+decomp_mult <- decompose(ts_sales, type = "multiplicative")
+plot(decomp_mult)
+```
+
+## 3.3 STL Decomposition (Seasonal-Trend via Loess)
+
+STL is more flexible than classical decomposition:
+
+- Handles **changing seasonality** over time
+- **Robust** to outliers (with `robust=True`)
+- Works for any seasonal period
+- Always additive (log-transform the series first for multiplicative behaviour)
+
+```{python}
+#| label: py-stl
+#| fig-cap: "STL decomposition (robust)"
+
+stl = STL(df["sales"], period=12, robust=True)
+stl_res = stl.fit()
+
+fig = stl_res.plot()
+fig.set_size_inches(11, 9)
+fig.suptitle("STL Decomposition (Robust)", fontsize=13, fontweight="bold", y=1.01)
+plt.tight_layout()
+plt.show()
+
+# Seasonal strength: 0 = no seasonality, 1 = perfectly seasonal
+var_resid    = np.var(stl_res.resid)
+var_seasonal = np.var(stl_res.seasonal + stl_res.resid)
+strength = max(0, 1 - var_resid / var_seasonal)
+print(f"Seasonal strength F_S = {strength:.4f}  (>0.64 = strong)")
+```
+
+## R Equivalent
+
+```r
+stl_r <- stl(ts_sales, s.window = "periodic", robust = TRUE)
+plot(stl_r, main = "STL Decomposition (Robust)")
+
+# Seasonal strength via feasts
+tsibble_sales |> features(sales, feat_stl)
+```
+
+---
+
+# 4. Stationarity Testing
+
+ARIMA requires a **stationary** series — one whose mean, variance, and autocorrelation structure do not change over time. Two complementary tests are standard practice.
+
+| Test | H₀ | Reject if | Conclusion when rejected |
+|------|----|-----------|--------------------------|
+| ADF  | Unit root (non-stationary) | p < 0.05 | Series **is** stationary |
+| KPSS | Stationary | p < 0.05 | Series **is not** stationary |
+
+Use both: if ADF rejects and KPSS does not, you have strong evidence of stationarity.
+
+## 4.1 Augmented Dickey-Fuller
+
+```{python}
+#| label: py-adf
+
+def adf_report(series, name):
+    res = adfuller(series.dropna(), autolag="AIC")
+    verdict = "STATIONARY ✓" if res[1] < 0.05 else "NON-STATIONARY ✗"
+    print(f"\nADF — {name}")
+    print(f"  Statistic : {res[0]:.4f}")
+    print(f"  p-value   : {res[1]:.4f}  →  {verdict}")
+    print(f"  Lags used : {res[2]}")
+    for k, v in res[4].items():
+        print(f"  Critical {k}: {v:.4f}")
+
+adf_report(df["sales"],        "Original series")
+adf_report(df["sales"].diff(), "First difference")
+```
+
+## R Equivalent
+
+```r
+library(tseries)
+adf.test(ts_sales)          # original
+adf.test(diff(ts_sales))    # first difference
+
+# More control via urca
+library(urca)
+summary(ur.df(ts_sales, type = "drift", selectlags = "AIC"))
+```
+
+## 4.2 KPSS Test
+
+```{python}
+#| label: py-kpss
+
+def kpss_report(series, name):
+    stat, pval, lags, crits = kpss(series.dropna(), regression="c", nlags="auto")
+    verdict = "NON-STATIONARY ✗" if pval < 0.05 else "STATIONARY ✓"
+    print(f"\nKPSS — {name}")
+    print(f"  Statistic : {stat:.4f}")
+    print(f"  p-value   : {pval:.4f}  →  {verdict}")
+    print(f"  Lags used : {lags}")
+
+kpss_report(df["sales"],        "Original series")
+kpss_report(df["sales"].diff(), "First difference")
+```
+
+## R Equivalent
+
+```r
+kpss.test(ts_sales)
+kpss.test(diff(ts_sales))
+```
+
+---
+
+# 5. ACF & PACF
+
+The ACF and PACF plots guide the selection of the AR order **p** and MA order **q**.
+
+| Pattern | Implication |
+|---------|-------------|
+| ACF cuts off at lag *q*, PACF tails off | Pure MA(*q*) |
+| PACF cuts off at lag *p*, ACF tails off | Pure AR(*p*) |
+| Both tail off gradually | ARMA(*p*, *q*) — choose smallest model by AIC |
+| Spike at lag *m* in ACF | Seasonal component at period *m* |
+
+Always inspect ACF/PACF on the **differenced** (stationary) series.
+
+```{python}
+#| label: py-acf-pacf
+#| fig-cap: "ACF and PACF of the first-differenced series"
+
+sales_diff = df["sales"].diff().dropna()
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+plot_acf( sales_diff, lags=36, ax=axes[0], title="ACF — First Difference",  zero=False)
+plot_pacf(sales_diff, lags=36, ax=axes[1], title="PACF — First Difference", zero=False, method="ywm")
+plt.tight_layout()
+plt.show()
+```
+
+## R Equivalent
+
+```r
+sales_diff <- diff(ts_sales)
+par(mfrow = c(1, 2))
+acf( sales_diff, lag.max = 36, main = "ACF — First Difference")
+pacf(sales_diff, lag.max = 36, main = "PACF — First Difference")
+
+# tidyverts
+tsibble_sales |>
+  mutate(d_sales = difference(sales)) |>
+  ACF(d_sales, lag_max = 36) |> autoplot()
+```
+
+---
+
+# 6. ARIMA Modelling
+
+## Theory
+
+ARIMA(**p**, **d**, **q**) combines three components:
+
+- **AR(p)** — Autoregressive: $Y_t$ depends on its own past *p* values
+- **I(d)**  — Integrated: series is differenced *d* times to achieve stationarity
+- **MA(q)** — Moving Average: $Y_t$ depends on past *q* forecast errors
+
+$$
+\phi(B)(1-B)^d Y_t = \theta(B)\varepsilon_t
+$$
+
+where $B$ is the backshift operator, $\phi$ are AR coefficients, $\theta$ are MA coefficients, and $\varepsilon_t \sim \mathcal{N}(0, \sigma^2)$.
+
+**Selection heuristic:**
+
+1. Determine *d* from stationarity tests
+2. Read *p* from PACF (cuts off at lag *p*)
+3. Read *q* from ACF (cuts off at lag *q*)
+4. Compare candidate models by AIC / BIC
+
+## 6.1 Manual Fitting
+
+```{python}
+#| label: py-arima-fit
+
+arima_model = ARIMA(train, order=(2, 1, 2))
+arima_fit   = arima_model.fit()
+print(arima_fit.summary())
+```
+
+## R Equivalent
+
+```r
+arima_r <- arima(train_r, order = c(2, 1, 2))
+summary(arima_r)
+
+# or with forecast package (adds tidy AIC/BIC)
+arima_r2 <- Arima(train_r, order = c(2, 1, 2))
+summary(arima_r2)
+```
+
+## 6.2 Forecasting with ARIMA
+
+```{python}
+#| label: py-arima-forecast
+#| fig-cap: "ARIMA(2,1,2) 12-month forecast vs actual"
+
+fc_obj  = arima_fit.get_forecast(steps=12)
+fc_mean = fc_obj.predicted_mean
+fc_ci   = fc_obj.conf_int(alpha=0.05)
+
+fig, ax = plt.subplots(figsize=(11, 5))
+ax.plot(train.index[-36:], train[-36:], label="Training",  color="steelblue")
+ax.plot(test.index,         test,        label="Actual",   color="black", linewidth=2)
+ax.plot(fc_mean.index,      fc_mean,     label="Forecast", color="crimson",
+        linestyle="--", linewidth=2)
+ax.fill_between(fc_ci.index, fc_ci.iloc[:, 0], fc_ci.iloc[:, 1],
+                alpha=0.2, color="crimson", label="95% CI")
+ax.set_title("ARIMA(2,1,2) Forecast", fontsize=13, fontweight="bold")
+ax.set_xlabel("Date")
+ax.set_ylabel("Sales")
+ax.legend()
+plt.tight_layout()
+plt.show()
+
+mae  = mean_absolute_error(test, fc_mean)
+rmse = np.sqrt(mean_squared_error(test, fc_mean))
+print(f"MAE  = {mae:.2f}")
+print(f"RMSE = {rmse:.2f}")
+```
+
+## R Equivalent
+
+```r
+fc_arima_r <- forecast(arima_r2, h = 12)
+autoplot(fc_arima_r) +
+  autolayer(test_r, series = "Actual", colour = "black") +
+  labs(title = "ARIMA(2,1,2) Forecast") +
+  theme_minimal()
+
+accuracy(fc_arima_r, test_r)
+```
+
+## 6.3 Residual Diagnostics
+
+A well-fitted model should have residuals that are:
+
+- Centred on zero with no trend
+- Uncorrelated (white noise) — check with Ljung-Box
+- Approximately normally distributed
+
+```{python}
+#| label: py-arima-diagnostics
+#| fig-cap: "ARIMA(2,1,2) residual diagnostics"
+
+residuals = arima_fit.resid.dropna()
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+# Residuals over time
+axes[0, 0].plot(residuals, color="steelblue", linewidth=0.8)
+axes[0, 0].axhline(0, color="crimson", linestyle="--", alpha=0.6)
+axes[0, 0].set_title("Residuals Over Time")
+
+# Histogram + normal fit
+axes[0, 1].hist(residuals, bins=25, edgecolor="white",
+                color="steelblue", density=True)
+xr = np.linspace(residuals.min(), residuals.max(), 200)
+axes[0, 1].plot(xr, norm.pdf(xr, residuals.mean(), residuals.std()),
+                color="crimson", lw=2, label="Normal")
+axes[0, 1].set_title("Histogram of Residuals")
+axes[0, 1].legend()
+
+# ACF of residuals
+plot_acf(residuals, lags=30, ax=axes[1, 0],
+         title="ACF of Residuals", zero=False)
+
+# Q-Q plot
+probplot(residuals, plot=axes[1, 1])
+axes[1, 1].set_title("Q-Q Plot")
+
+plt.suptitle("ARIMA(2,1,2) Residual Diagnostics",
+             fontsize=13, fontweight="bold", y=1.01)
+plt.tight_layout()
+plt.show()
+
+# Ljung-Box test
+lb = acorr_ljungbox(residuals, lags=[10, 20], return_df=True)
+print("\nLjung-Box Test (p > 0.05 = no autocorrelation ✓):")
+print(lb.round(4))
+```
+
+## R Equivalent
+
+```r
+# One-line diagnostic plot + Ljung-Box
+checkresiduals(arima_r2)
+
+# Ljung-Box only
+Box.test(residuals(arima_r2), lag = 20, type = "Ljung-Box")
+```
+
+## 6.4 Auto-ARIMA
+
+Instead of reading ACF/PACF manually, auto-ARIMA searches over (p, d, q) combinations and selects by AIC.
+
+```{python}
+#| label: py-auto-arima
+
+try:
+    from pmdarima import auto_arima
+    auto_model = auto_arima(
+        train,
+        seasonal=False,
+        d=None,                       # auto-detect d
+        information_criterion="aic",
+        stepwise=True,
+        trace=True,
+        error_action="ignore",
+        suppress_warnings=True,
+    )
+    print(f"\nSelected order : {auto_model.order}")
+    print(f"AIC            : {auto_model.aic():.2f}")
+except ImportError:
+    print("Install pmdarima:  pip install pmdarima")
+```
+
+## R Equivalent
+
+```r
+# auto.arima is built into the forecast package — no extra install
+auto_r <- auto.arima(train_r, stepwise = FALSE, approximation = FALSE,
+                     trace = TRUE)
+summary(auto_r)
+# Outputs selected (p,d,q), coefficients, AIC, BIC, RMSE
+```
+
+---
+
+# 7. SARIMA — Seasonal ARIMA
+
+ARIMA ignores seasonality. SARIMA adds a **seasonal** AR/I/MA structure at period *m*:
+
+$$
+\text{SARIMA}(p,d,q)(P,D,Q)_m
+$$
+
+| Parameter | Meaning |
+|-----------|---------|
+| P | Seasonal AR order |
+| D | Seasonal differencing (usually 0 or 1) |
+| Q | Seasonal MA order |
+| m | Seasonal period (12 = monthly) |
+
+Seasonal spikes in the ACF at lags *m*, *2m*, … suggest a seasonal MA term. Seasonal spikes in the PACF suggest a seasonal AR term.
+
+## 7.1 Fitting SARIMA
+
+```{python}
+#| label: py-sarima-fit
+
+sarima_model = SARIMAX(
+    train,
+    order=(1, 1, 1),
+    seasonal_order=(1, 1, 1, 12),
+    enforce_stationarity=False,
+    enforce_invertibility=False,
+)
+sarima_fit = sarima_model.fit(disp=False)
+print(sarima_fit.summary())
+```
+
+## R Equivalent
+
+```r
+sarima_r <- Arima(train_r,
+                  order    = c(1, 1, 1),
+                  seasonal = list(order = c(1, 1, 1), period = 12))
+summary(sarima_r)
+```
+
+## 7.2 SARIMA Forecast
+
+```{python}
+#| label: py-sarima-forecast
+#| fig-cap: "SARIMA(1,1,1)(1,1,1)[12] forecast vs actual"
+
+fc_s      = sarima_fit.get_forecast(steps=12)
+fc_s_mean = fc_s.predicted_mean
+fc_s_ci   = fc_s.conf_int(alpha=0.05)
+
+fig, ax = plt.subplots(figsize=(11, 5))
+ax.plot(train.index[-36:], train[-36:], label="Training",  color="steelblue")
+ax.plot(test.index,         test,        label="Actual",   color="black", linewidth=2)
+ax.plot(fc_s_mean.index,    fc_s_mean,   label="Forecast", color="seagreen",
+        linestyle="--", linewidth=2)
+ax.fill_between(fc_s_ci.index, fc_s_ci.iloc[:, 0], fc_s_ci.iloc[:, 1],
+                alpha=0.2, color="seagreen", label="95% CI")
+ax.set_title("SARIMA(1,1,1)(1,1,1)[12] Forecast", fontsize=13, fontweight="bold")
+ax.set_xlabel("Date")
+ax.set_ylabel("Sales")
+ax.legend()
+plt.tight_layout()
+plt.show()
+
+mae_s  = mean_absolute_error(test, fc_s_mean)
+rmse_s = np.sqrt(mean_squared_error(test, fc_s_mean))
+print(f"MAE  = {mae_s:.2f}")
+print(f"RMSE = {rmse_s:.2f}")
+```
+
+## R Equivalent
+
+```r
+fc_sarima_r <- forecast(sarima_r, h = 12)
+autoplot(fc_sarima_r) +
+  autolayer(test_r, series = "Actual", colour = "black") +
+  labs(title = "SARIMA(1,1,1)(1,1,1)[12] Forecast") +
+  theme_minimal()
+
+accuracy(fc_sarima_r, test_r)
+```
+
+## 7.3 SARIMA Residual Diagnostics
+
+```{python}
+#| label: py-sarima-diagnostics
+#| fig-cap: "SARIMA residual diagnostics"
+
+res_s = sarima_fit.resid.dropna()
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+axes[0, 0].plot(res_s, color="steelblue", linewidth=0.8)
+axes[0, 0].axhline(0, color="crimson", linestyle="--", alpha=0.6)
+axes[0, 0].set_title("Residuals Over Time")
+
+axes[0, 1].hist(res_s, bins=25, edgecolor="white",
+                color="steelblue", density=True)
+xr = np.linspace(res_s.min(), res_s.max(), 200)
+axes[0, 1].plot(xr, norm.pdf(xr, res_s.mean(), res_s.std()),
+                color="crimson", lw=2, label="Normal")
+axes[0, 1].set_title("Histogram of Residuals")
+axes[0, 1].legend()
+
+plot_acf(res_s, lags=36, ax=axes[1, 0], title="ACF of Residuals", zero=False)
+probplot(res_s, plot=axes[1, 1])
+axes[1, 1].set_title("Q-Q Plot")
+
+plt.suptitle("SARIMA(1,1,1)(1,1,1)[12] Residual Diagnostics",
+             fontsize=13, fontweight="bold", y=1.01)
+plt.tight_layout()
+plt.show()
+
+lb_s = acorr_ljungbox(res_s, lags=[12, 24], return_df=True)
+print("\nLjung-Box Test:")
+print(lb_s.round(4))
+```
+
+## R Equivalent
+
+```r
+checkresiduals(sarima_r)
+Box.test(residuals(sarima_r), lag = 24, type = "Ljung-Box")
+```
+
+---
+
+# 8. Model Comparison
+
+```{python}
+#| label: py-comparison
+#| fig-cap: "ARIMA vs SARIMA — forecast comparison"
+
+def mape(y_true, y_pred):
+    return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+
+fc_arima_aligned  = arima_fit.get_forecast(steps=12).predicted_mean
+fc_sarima_aligned = sarima_fit.get_forecast(steps=12).predicted_mean
+fc_arima_aligned.index  = test.index
+fc_sarima_aligned.index = test.index
+
+rows = [
+    {"Model": "ARIMA(2,1,2)",
+     "MAE" : round(mean_absolute_error(test, fc_arima_aligned),          2),
+     "RMSE": round(np.sqrt(mean_squared_error(test, fc_arima_aligned)),  2),
+     "MAPE": round(mape(test.values, fc_arima_aligned.values),           2)},
+    {"Model": "SARIMA(1,1,1)(1,1,1)[12]",
+     "MAE" : round(mean_absolute_error(test, fc_sarima_aligned),         2),
+     "RMSE": round(np.sqrt(mean_squared_error(test, fc_sarima_aligned)), 2),
+     "MAPE": round(mape(test.values, fc_sarima_aligned.values),          2)},
+]
+print(pd.DataFrame(rows).set_index("Model").to_string())
+
+# Plot
+fig, ax = plt.subplots(figsize=(12, 5))
+ax.plot(train.index[-24:], train[-24:],      label="Training",   color="steelblue", lw=1.5)
+ax.plot(test.index,         test,             label="Actual",     color="black",     lw=2.5)
+ax.plot(fc_arima_aligned.index,  fc_arima_aligned,
+        label="ARIMA(2,1,2)",             color="crimson",   lw=2, linestyle="--")
+ax.plot(fc_sarima_aligned.index, fc_sarima_aligned,
+        label="SARIMA(1,1,1)(1,1,1)[12]", color="seagreen",  lw=2, linestyle="--")
+ax.set_title("ARIMA vs SARIMA Forecast Comparison", fontsize=13, fontweight="bold")
+ax.set_xlabel("Date")
+ax.set_ylabel("Sales")
+ax.legend()
+plt.tight_layout()
+plt.show()
+```
+
+## R Equivalent
+
+```r
+accuracy(fc_arima_r,  test_r)
+accuracy(fc_sarima_r, test_r)
+
+# Combined plot
+autoplot(fc_sarima_r) +
+  autolayer(fc_arima_r,  series = "ARIMA",  PI = FALSE) +
+  autolayer(test_r,      series = "Actual", colour = "black") +
+  labs(title = "ARIMA vs SARIMA") +
+  theme_minimal()
+```
+
+---
+
+# 9. Python vs R: Quick Reference
+
+| Task | Python | R |
+|------|--------|---|
+| Time series object | `pd.Series` with `DatetimeIndex` | `ts()`, `tsibble` |
+| Classical decompose | `seasonal_decompose()` (statsmodels) | `decompose()` (stats) |
+| STL decompose | `STL()` (statsmodels) | `stl()` (stats) |
+| ADF test | `adfuller()` (statsmodels) | `adf.test()` (tseries) |
+| KPSS test | `kpss()` (statsmodels) | `kpss.test()` (tseries) |
+| ACF / PACF | `plot_acf/pacf()` (statsmodels) | `acf/pacf()` or `ACF()` (feasts) |
+| Manual ARIMA | `ARIMA()` (statsmodels) | `Arima()` (forecast) |
+| Auto-ARIMA | `auto_arima()` (pmdarima — extra install) | `auto.arima()` (forecast — built-in) |
+| SARIMA | `SARIMAX()` (statsmodels) | `Arima(seasonal=…)` (forecast) |
+| Residual diagnostics | Manual (acorr_ljungbox + plots) | `checkresiduals()` — one line |
+| Forecast object | `.get_forecast()` + `.conf_int()` | `forecast()` + `autoplot()` |
+
+**Key differences:**
+
+- R's `forecast` package provides `auto.arima()` and `checkresiduals()` out of the box; Python needs `pmdarima` for the equivalent auto-selection.
+- Python gives finer programmatic control and integrates naturally with ML pipelines.
+- R's `autoplot()` produces publication-quality forecast plots with one line.
+
+---
+
+# 10. Workflow Checklist
+
+Use this checklist for every new time series project:
+
+1. Plot the raw series — look for trend, seasonality, structural breaks, outliers
+2. Run rolling mean/std to check for non-stationarity
+3. Decompose (STL is almost always the better choice over classical)
+4. Run ADF + KPSS on the original and differenced series; determine *d*
+5. Plot ACF / PACF on the stationary series; read off candidate *p* and *q*
+6. Fit ARIMA and SARIMA; compare AIC/BIC
+7. Diagnose residuals — Ljung-Box, Q-Q plot, histogram
+8. Forecast and evaluate on a held-out test set (MAE, RMSE, MAPE)
+9. Use auto-ARIMA as a sanity check against your manual model
+
+---
+
+# Session Info
+
+```{python}
+#| label: session-info
+
+import sys, statsmodels, sklearn, numpy, pandas, matplotlib
+print(f"Python      : {sys.version.split()[0]}")
+print(f"pandas      : {pandas.__version__}")
+print(f"numpy       : {numpy.__version__}")
+print(f"statsmodels : {statsmodels.__version__}")
+print(f"scikit-learn: {sklearn.__version__}")
+print(f"matplotlib  : {matplotlib.__version__}")
+```

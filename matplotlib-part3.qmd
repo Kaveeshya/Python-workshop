@@ -1,0 +1,267 @@
+---
+title: "Seaborn for Statistical Data Visualization"
+author: "N.L.N.Kumarage (AS2022469)"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: false
+    code-tools: false
+    smooth-scroll: true
+execute:
+  warning: false
+  message: false
+---
+
+# Introduction
+
+Seaborn is a Python library built on top of Matplotlib used for **statistical data visualization**. It is mainly used for exploring data and understanding patterns.
+
+It helps to: - Understand distributions\
+- Compare categories\
+- Study relationships\
+- Visualize correlations
+
+------------------------------------------------------------------------
+
+# Installation Guide
+
+Seaborn must be installed before use.
+
+## Using pip
+
+Use pip when you are working with: - Standard Python installation - VS Code / PyCharm / Jupyter (non-Anaconda environments)
+
+Command: pip install seaborn
+
+------------------------------------------------------------------------
+
+## Using conda
+
+Use conda when you are working with: - Anaconda / Miniconda - Data science environments with pre-installed packages
+
+Command: conda install seaborn
+
+------------------------------------------------------------------------
+
+# Dataset: Tips
+
+We use the built-in Seaborn dataset called **tips**, which contains restaurant billing information.
+
+```{python}
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+sns.set_theme(style="whitegrid")
+
+tips = sns.load_dataset("tips")
+tips.head()
+```
+
+### Dataset Overview
+
+-   total_bill → total bill amount\
+-   tip → tip given\
+-   sex → gender of customer\
+-   smoker → smoking status\
+-   day → day of visit\
+-   time → lunch or dinner\
+-   size → number of people
+
+------------------------------------------------------------------------
+
+# 1. Distribution Plots
+
+These plots show how values are distributed.
+
+## Histogram
+
+```{python}
+sns.histplot(data=tips, x="total_bill", bins=20)
+plt.title("Distribution of Total Bill")
+plt.show()
+```
+
+### Explanation
+
+Shows how frequently different bill values occur.
+
+------------------------------------------------------------------------
+
+## Histogram with KDE
+
+```{python}
+sns.histplot(data=tips, x="total_bill", kde=True)
+plt.title("Histogram with KDE")
+plt.show()
+```
+
+### Explanation
+
+Combines frequency distribution with a smooth density curve.
+
+------------------------------------------------------------------------
+
+## KDE Plot
+
+```{python}
+sns.kdeplot(data=tips, x="total_bill", fill=True)
+plt.title("KDE Plot")
+plt.show()
+```
+
+### Explanation
+
+Shows the probability density of the data.
+
+------------------------------------------------------------------------
+
+## Joint Plot
+
+```{python}
+sns.jointplot(data=tips, x="total_bill", y="tip", kind="scatter")
+```
+
+### Explanation
+
+Shows relationship between two variables along with their individual distributions.
+
+------------------------------------------------------------------------
+
+## Pair Plot
+
+```{python}
+sns.pairplot(tips)
+```
+
+### Explanation
+
+Shows all pairwise relationships between numerical variables.
+
+------------------------------------------------------------------------
+
+# 2. Categorical Data Plots
+
+Used to compare values across groups.
+
+------------------------------------------------------------------------
+
+## Box Plot
+
+```{python}
+sns.boxplot(data=tips, x="day", y="total_bill")
+plt.title("Box Plot by Day")
+plt.show()
+```
+
+### Explanation
+
+Shows median, quartiles, and outliers.
+
+------------------------------------------------------------------------
+
+## Violin Plot
+
+```{python}
+sns.violinplot(data=tips, x="day", y="total_bill")
+plt.title("Violin Plot by Day")
+plt.show()
+```
+
+### Explanation
+
+Combines distribution shape with summary statistics.
+
+------------------------------------------------------------------------
+
+## Strip Plot
+
+```{python}
+sns.stripplot(data=tips, x="day", y="total_bill")
+plt.title("Strip Plot")
+plt.show()
+```
+
+### Explanation
+
+Shows individual data points.
+
+------------------------------------------------------------------------
+
+## Swarm Plot
+
+```{python}
+sns.swarmplot(data=tips, x="day", y="total_bill")
+plt.title("Swarm Plot")
+plt.show()
+```
+
+### Explanation
+
+Avoids overlapping points for clearer visualization.
+
+------------------------------------------------------------------------
+
+## Bar Plot
+
+```{python}
+sns.barplot(data=tips, x="day", y="total_bill")
+plt.title("Average Total Bill by Day")
+plt.show()
+```
+
+### Explanation
+
+Shows average values with confidence intervals.
+
+------------------------------------------------------------------------
+
+## Count Plot
+
+```{python}
+sns.countplot(data=tips, x="day")
+plt.title("Number of Records by Day")
+plt.show()
+```
+
+### Explanation
+
+Shows frequency of observations per category.
+
+------------------------------------------------------------------------
+
+# 3. Matrix Plots
+
+Matrix plots show relationships using color encoding.
+
+------------------------------------------------------------------------
+
+## Correlation Matrix
+
+```{python}
+corr = tips.select_dtypes(include=np.number).corr()
+corr.head()
+```
+
+------------------------------------------------------------------------
+
+## Heatmap
+
+```{python}
+sns.heatmap(corr, annot=True, cmap="coolwarm")
+plt.title("Correlation Heatmap")
+plt.show()
+```
+
+------------------------------------------------------------------------
+
+### 
+
+# Conclusion
+
+Seaborn is widely used in data science because it simplifies: - Distribution analysis\
+- Category comparison\
+- Relationship visualization\
+- Correlation analysis

@@ -1,0 +1,509 @@
+---
+title: "Regression Analysis with statsmodels"
+author: "Kaveeshya"
+date: today
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-location: right
+    toc-title: "Contents"
+    toc-depth: 3
+    toc-expand: true
+    number-sections: true
+    code-fold: true
+    code-tools: true
+    code-copy: true
+    highlight-style: github
+    smooth-scroll: true
+    self-contained: true
+    fig-width: 8
+    fig-height: 5
+    df-print: paged
+    css: styles (1).css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{python}
+#| label: setup
+#| include: false
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.stats.diagnostic import het_breuschpagan
+from scipy import stats
+
+# Plot aesthetics
+sns.set_theme(style="whitegrid", palette="muted")
+plt.rcParams.update({"figure.dpi": 120, "axes.titlesize": 13})
+```
+
+# Introduction
+
+Regression analysis is one of the most widely used statistical techniques. In Python, **`statsmodels`** provides R-style formula interfaces, detailed summary tables, and a rich set of diagnostic tools — making it the go-to library for inferential regression.
+
+This document covers:
+
+- Simple and multiple OLS regression
+- Interpreting coefficients and the summary table
+- Model diagnostics (residuals, normality, homoscedasticity, multicollinearity)
+- Polynomial and interaction terms
+- Logistic regression
+
+---
+
+# What is Regression Analysis?
+
+## Core Concept
+
+Regression analysis is a statistical method used to **model and quantify the relationship between a dependent variable (outcome) and one or more independent variables (predictors)**. At its heart, regression answers the question: *"How does Y change when X changes, holding everything else constant?"*
+
+The most fundamental form is **Ordinary Least Squares (OLS)** linear regression, which fits a straight line (or hyperplane in multiple dimensions) through observed data by minimising the sum of squared residuals — the vertical distances between each data point and the fitted line:
+
+$$
+\hat{\boldsymbol{\beta}} = \arg\min_{\boldsymbol{\beta}} \sum_{i=1}^{n} \left(y_i - \mathbf{x}_i^\top \boldsymbol{\beta}\right)^2
+$$
+
+## Types of Regression
+
+| Type | Use Case | Example |
+|------|----------|---------|
+| **Simple Linear** | One predictor, continuous outcome | `mpg ~ wt` |
+| **Multiple Linear** | Several predictors, continuous outcome | `mpg ~ wt + hp + cyl` |
+| **Polynomial** | Non-linear curvature in one predictor | `mpg ~ wt + I(wt²)` |
+| **Interaction** | Effect of X₁ depends on X₂ | `mpg ~ wt * am` |
+| **Logistic** | Binary outcome (0/1) | `am ~ mpg + wt` |
+| **Poisson / GLM** | Count or proportion data | claims, rates |
+
+## The Four OLS Assumptions (LINE)
+
+For OLS estimates to be unbiased and efficient (BLUE — Best Linear Unbiased Estimator), four assumptions must hold:
+
+1. **L**inearity — the relationship between predictors and outcome is linear in parameters.
+2. **I**ndependence — observations are independent of each other (no autocorrelation).
+3. **N**ormality — the residuals $\varepsilon_i$ are approximately normally distributed.
+4. **E**qual variance (Homoscedasticity) — the spread of residuals is constant across all fitted values.
+
+Violating these assumptions doesn't necessarily invalidate the model, but it does affect the reliability of standard errors, p-values, and confidence intervals. The diagnostics section of this document tests each assumption explicitly.
+
+## What Regression Can and Cannot Do
+
+::: {.callout-important}
+## Correlation ≠ Causation
+Regression quantifies **association**, not causation. A statistically significant coefficient means the predictor is linearly related to the outcome in the sample — it does not prove that X *causes* Y. Causal claims require additional design considerations (randomisation, instrumental variables, etc.).
+:::
+
+Regression **can**:
+
+- Estimate the average change in Y per unit change in X, controlling for other variables
+- Quantify uncertainty in estimates via standard errors and confidence intervals
+- Test hypotheses about individual coefficients (t-test) or the model as a whole (F-test)
+- Predict new outcomes given predictor values
+
+Regression **cannot**:
+
+- Establish causality from observational data alone
+- handle predictors that are perfectly correlated (multicollinearity causes the design matrix to be singular)
+- Extrapolate reliably far beyond the range of the training data
+
+---
+
+# Python vs R for Regression
+
+Both Python and R are excellent choices for regression analysis. The right tool depends on your workflow, team, and goals.
+
+## Advantages of Python
+
+**1. General-purpose ecosystem**
+Python is a full-stack programming language. The same environment used for regression can handle data ingestion, API calls, web scraping, building dashboards (Dash, Streamlit), deploying machine learning models, and automating pipelines — with no context switching.
+
+**2. Machine learning integration**
+Python's `scikit-learn`, `XGBoost`, `LightGBM`, and `PyTorch` ecosystems are the industry standard for predictive modelling. When a project evolves from inference (statsmodels) toward prediction and deployment, everything stays in one language.
+
+**3. Industry adoption and job market**
+Python consistently ranks as the most popular language in data science hiring. Teams in tech, finance, and consulting typically standardise on Python, making code sharing and collaboration easier.
+
+**4. Performance and scalability**
+Libraries like `NumPy`, `Polars`, and GPU-backed frameworks make Python well-suited for large datasets that would strain R's in-memory model.
+
+**5. Software engineering practices**
+Python has mature tooling for testing (`pytest`), packaging (`pip`/`poetry`), version control workflows, and containerisation (`Docker`) — essential when regression code moves into production.
+
+**6. Quarto and notebook support**
+Python integrates seamlessly with Quarto, Jupyter, and VS Code, enabling reproducible, publication-quality documents (like this one).
+
+## Disadvantages of Python (Compared to R)
+
+**1. Statistical output is less rich out of the box**
+R's `lm()` and related functions were purpose-built by statisticians. `summary(lm(...))` in R prints p-values, significance stars, and diagnostic cues with a single call. `statsmodels` matches most of this, but the ecosystem for niche statistical methods (mixed models, survival analysis, Bayesian hierarchical models) is generally more mature in R.
+
+**2. Formula syntax is a secondary concern**
+R's formula interface (`y ~ x1 + x2`) is native to the language. In Python, `statsmodels` adds it as a convenience layer (`smf.ols("y ~ x1 + x2")`), but base Python has no concept of formulas — this can feel bolted-on for statisticians.
+
+**3. Tidyverse-style data wrangling**
+R's `tidyverse` (`dplyr`, `tidyr`, `ggplot2`) provides an exceptionally coherent and readable grammar for data manipulation and visualisation. `pandas` and `seaborn` cover similar ground but with less syntactic consistency.
+
+**4. Academic statistics community defaults to R**
+Most econometrics, biostatistics, and social science textbooks and journals use R. Replicating published analyses often requires translating R code, which adds friction.
+
+**5. Verbose setup for simple tasks**
+Running a quick regression in R takes three lines. In Python, you typically import five libraries and manage more boilerplate before reaching the model.
+
+## Quick Comparison Table
+
+| Criterion | Python (`statsmodels`) | R (`lm`) |
+|-----------|----------------------|----------|
+| Formula interface | ✅ Via `smf` | ✅ Native |
+| Summary output | ✅ Detailed | ✅ Detailed + stars |
+| ML integration | ✅ Excellent (`sklearn`) | 🔶 Good (`caret`, `tidymodels`) |
+| Visualisation | ✅ `matplotlib` / `seaborn` | ✅ `ggplot2` (often preferred) |
+| Niche stat methods | 🔶 Growing | ✅ Very mature |
+| Production deployment | ✅ Excellent | 🔶 Possible but less common |
+| Learning curve (stats focus) | 🔶 Moderate | ✅ Lower for statisticians |
+| Ecosystem breadth | ✅ Very broad | 🔶 Primarily stats/data |
+
+::: {.callout-tip}
+## When to Use Which
+Choose **Python** when your work sits within a broader data engineering or ML pipeline, your team is mixed (engineers + analysts), or you need to deploy models as services.
+Choose **R** when your work is primarily statistical inference, your audience is academic, or you heavily rely on specialised statistical packages.
+Many practitioners use both — Python for pipelines and deployment, R for exploratory analysis and publication figures.
+:::
+
+---
+
+# Data
+
+We use the classic **`mtcars`** dataset (Motor Trend Car Road Tests), loaded via `statsmodels`'s built-in datasets.
+
+```{python}
+#| label: load-data
+
+# mtcars dataset — embedded locally (no internet required)
+mtcars = pd.DataFrame({
+    "mpg":  [21.0,21.0,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26.0,30.4,15.8,19.7,15.0,21.4],
+    "cyl":  [6,6,4,6,8,6,8,4,4,6,6,8,8,8,8,8,8,4,4,4,4,8,8,8,8,4,4,4,8,6,8,4],
+    "disp": [160.0,160.0,108.0,258.0,360.0,225.0,360.0,146.7,140.8,167.6,167.6,275.8,275.8,275.8,472.0,460.0,440.0,78.7,75.7,71.1,120.1,318.0,304.0,350.0,400.0,79.0,120.3,95.1,351.0,145.0,301.0,121.0],
+    "hp":   [110,110,93,110,175,105,245,62,95,123,123,180,180,180,205,215,230,66,52,65,97,150,150,245,175,66,91,113,264,175,335,109],
+    "drat": [3.90,3.90,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3.00,3.23,4.08,4.93,4.22,3.70,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],
+    "wt":   [2.620,2.875,2.320,3.215,3.440,3.460,3.570,3.190,3.150,3.440,3.440,4.070,3.730,3.780,5.250,5.424,5.345,2.200,1.615,1.835,2.465,3.520,3.435,3.840,3.845,1.935,2.140,1.513,3.170,2.770,3.570,2.780],
+    "qsec": [16.46,17.02,18.61,19.44,17.02,20.22,15.84,20.00,22.90,18.30,18.90,17.40,17.60,18.00,17.98,17.82,17.42,19.47,18.52,19.90,20.01,16.87,17.30,15.41,17.05,18.90,16.70,16.90,14.50,15.50,14.60,18.60],
+    "vs":   [0,0,1,1,0,1,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,0,1,0,0,0,1],
+    "am":   [1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1],
+    "gear": [4,4,4,3,3,3,3,4,4,4,4,3,3,3,3,3,3,4,4,4,3,3,3,3,3,4,5,5,5,5,5,4],
+    "carb": [4,4,1,1,2,1,4,2,2,4,4,3,3,3,4,4,4,1,2,1,1,2,2,4,2,1,2,2,4,6,8,2]
+}, index=["Mazda RX4","Mazda RX4 Wag","Datsun 710","Hornet 4 Drive","Hornet Sportabout","Valiant","Duster 360","Merc 240D","Merc 230","Merc 280","Merc 280C","Merc 450SE","Merc 450SL","Merc 450SLC","Cadillac Fleetwood","Lincoln Continental","Chrysler Imperial","Fiat 128","Honda Civic","Toyota Corolla","Toyota Corona","Dodge Challenger","AMC Javelin","Camaro Z28","Pontiac Firebird","Fiat X1-9","Porsche 914-2","Lotus Europa","Ford Pantera L","Ferrari Dino","Maserati Bora","Volvo 142E"])
+
+mtcars.head()
+```
+
+```{python}
+#| label: summary-stats
+
+mtcars.describe().round(2)
+```
+
+---
+
+# Simple Linear Regression {#sec-simple}
+
+## Model Specification
+
+We regress **miles per gallon** (`mpg`) on **weight** (`wt`).
+
+$$
+\text{mpg}_i = \beta_0 + \beta_1 \cdot \text{wt}_i + \varepsilon_i
+$$
+
+```{python}
+#| label: slr-model
+
+model_slr = smf.ols("mpg ~ wt", data=mtcars).fit()
+print(model_slr.summary())
+```
+
+## Interpreting the Output
+
+| Term | Estimate | Interpretation |
+|------|----------|----------------|
+| Intercept | ~37.29 | Expected `mpg` when `wt = 0` (extrapolation) |
+| `wt` | ~−5.34 | Each additional 1,000 lbs → mpg drops by ~5.34 |
+
+> **R² ≈ 0.75**: Weight alone explains ~75% of the variance in fuel efficiency.
+
+## Scatter Plot with Regression Line
+
+```{python}
+#| label: slr-plot
+#| fig-cap: "Simple Linear Regression: mpg ~ wt"
+
+fig, ax = plt.subplots()
+ax.scatter(mtcars["wt"], mtcars["mpg"], color="#4C72B0", alpha=0.7, edgecolors="white", s=70)
+
+x_range = np.linspace(mtcars["wt"].min(), mtcars["wt"].max(), 100)
+y_pred  = model_slr.params["Intercept"] + model_slr.params["wt"] * x_range
+ax.plot(x_range, y_pred, color="#DD4444", linewidth=2, label="OLS fit")
+
+ax.set_xlabel("Weight (1000 lbs)")
+ax.set_ylabel("Miles per Gallon")
+ax.set_title("mpg ~ wt")
+ax.legend()
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+# Multiple Linear Regression {#sec-multiple}
+
+## Model Specification
+
+We add **horsepower** (`hp`) and **number of cylinders** (`cyl`) as predictors.
+
+$$
+\text{mpg}_i = \beta_0 + \beta_1\,\text{wt}_i + \beta_2\,\text{hp}_i + \beta_3\,\text{cyl}_i + \varepsilon_i
+$$
+
+```{python}
+#| label: mlr-model
+
+model_mlr = smf.ols("mpg ~ wt + hp + cyl", data=mtcars).fit()
+print(model_mlr.summary())
+```
+
+## Coefficient Plot
+
+```{python}
+#| label: coef-plot
+#| fig-cap: "Coefficient plot with 95% confidence intervals"
+
+coefs = model_mlr.params.drop("Intercept")
+conf  = model_mlr.conf_int().drop("Intercept")
+
+fig, ax = plt.subplots(figsize=(7, 3))
+ax.errorbar(
+    coefs, coefs.index,
+    xerr=[coefs - conf[0], conf[1] - coefs],
+    fmt="o", color="#4C72B0", capsize=5, linewidth=1.5
+)
+ax.axvline(0, linestyle="--", color="gray", linewidth=1)
+ax.set_xlabel("Coefficient Estimate")
+ax.set_title("Multiple Regression Coefficients (95% CI)")
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+# Interaction Terms {#sec-interaction}
+
+Does the effect of weight on mpg differ by transmission type (`am`: 0 = automatic, 1 = manual)?
+
+```{python}
+#| label: interaction-model
+
+model_int = smf.ols("mpg ~ wt * am", data=mtcars).fit()
+print(model_int.summary())
+```
+
+```{python}
+#| label: interaction-plot
+#| fig-cap: "Interaction: effect of weight differs by transmission type"
+
+fig, ax = plt.subplots()
+colors = {0: "#4C72B0", 1: "#DD4444"}
+labels = {0: "Automatic", 1: "Manual"}
+
+for am_val, grp in mtcars.groupby("am"):
+    ax.scatter(grp["wt"], grp["mpg"],
+               color=colors[am_val], label=labels[am_val],
+               alpha=0.8, edgecolors="white", s=70)
+    x_r = np.linspace(grp["wt"].min(), grp["wt"].max(), 100)
+    b0  = model_int.params["Intercept"]
+    b1  = model_int.params["wt"]
+    b2  = model_int.params["am"]
+    b3  = model_int.params["wt:am"]
+    y_r = b0 + b1*x_r + b2*am_val + b3*x_r*am_val
+    ax.plot(x_r, y_r, color=colors[am_val], linewidth=2)
+
+ax.set_xlabel("Weight (1000 lbs)")
+ax.set_ylabel("Miles per Gallon")
+ax.set_title("mpg ~ wt × Transmission Type")
+ax.legend()
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+# Model Diagnostics {#sec-diagnostics}
+
+Reliable OLS inference requires checking four key assumptions.
+
+## Residuals vs Fitted
+
+```{python}
+#| label: resid-fitted
+#| fig-cap: "Residuals vs Fitted — checking linearity & homoscedasticity"
+
+fitted   = model_mlr.fittedvalues
+residuals = model_mlr.resid
+
+fig, ax = plt.subplots()
+ax.scatter(fitted, residuals, color="#4C72B0", alpha=0.7, edgecolors="white", s=60)
+ax.axhline(0, linestyle="--", color="gray")
+ax.set_xlabel("Fitted Values")
+ax.set_ylabel("Residuals")
+ax.set_title("Residuals vs Fitted")
+plt.tight_layout()
+plt.show()
+```
+
+## Q-Q Plot (Normality of Residuals)
+
+```{python}
+#| label: qq-plot
+#| fig-cap: "Q-Q Plot — residuals should follow the diagonal for normality"
+
+fig, ax = plt.subplots()
+sm.qqplot(residuals, line="s", ax=ax, alpha=0.6)
+ax.set_title("Normal Q-Q Plot of Residuals")
+plt.tight_layout()
+plt.show()
+```
+
+## Breusch-Pagan Test (Homoscedasticity)
+
+```{python}
+#| label: bp-test
+
+X_exog = sm.add_constant(mtcars[["wt", "hp", "cyl"]])
+bp_stat, bp_p, _, _ = het_breuschpagan(model_mlr.resid, X_exog)
+
+print(f"Breusch-Pagan statistic : {bp_stat:.4f}")
+print(f"p-value                 : {bp_p:.4f}")
+print("→ Homoscedasticity assumed." if bp_p > 0.05
+      else "→ Evidence of heteroscedasticity (consider robust SEs).")
+```
+
+## Variance Inflation Factors (Multicollinearity)
+
+```{python}
+#| label: vif
+
+vif_data = pd.DataFrame({
+    "Feature": ["wt", "hp", "cyl"],
+    "VIF": [
+        variance_inflation_factor(X_exog.values, i+1)
+        for i in range(3)
+    ]
+}).round(2)
+
+vif_data["Flag"] = vif_data["VIF"].apply(
+    lambda v: "⚠️ High" if v > 10 else ("🔶 Moderate" if v > 5 else "✅ OK")
+)
+vif_data
+```
+
+> **Rule of thumb:** VIF > 10 signals severe multicollinearity; VIF > 5 warrants attention.
+
+---
+
+# Logistic Regression {#sec-logistic}
+
+For a binary outcome, we switch to **logistic regression**. Here we predict whether a car has manual transmission (`am = 1`).
+
+$$
+\log\!\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1\,\text{mpg} + \beta_2\,\text{wt}
+$$
+
+```{python}
+#| label: logit-model
+
+model_logit = smf.logit("am ~ mpg + wt", data=mtcars).fit()
+print(model_logit.summary())
+```
+
+## Predicted Probabilities
+
+```{python}
+#| label: logit-probs
+#| fig-cap: "Predicted probability of manual transmission"
+
+mtcars["prob_manual"] = model_logit.predict()
+
+fig, ax = plt.subplots()
+sc = ax.scatter(
+    mtcars["wt"], mtcars["mpg"],
+    c=mtcars["prob_manual"], cmap="RdYlGn",
+    s=80, edgecolors="white", vmin=0, vmax=1
+)
+fig.colorbar(sc, ax=ax, label="P(Manual)")
+ax.set_xlabel("Weight (1000 lbs)")
+ax.set_ylabel("Miles per Gallon")
+ax.set_title("Predicted P(am = 1) from Logistic Regression")
+plt.tight_layout()
+plt.show()
+```
+
+## Odds Ratios
+
+```{python}
+#| label: odds-ratios
+
+odds_ratios = pd.DataFrame({
+    "OR":   np.exp(model_logit.params),
+    "2.5%": np.exp(model_logit.conf_int()[0]),
+    "97.5%":np.exp(model_logit.conf_int()[1])
+}).round(3)
+
+odds_ratios
+```
+
+---
+
+# Model Comparison {#sec-compare}
+
+```{python}
+#| label: model-compare
+
+summary_tbl = pd.DataFrame({
+    "Model":   ["SLR (wt)", "MLR (wt+hp+cyl)", "Interaction (wt×am)"],
+    "R²":      [model_slr.rsquared, model_mlr.rsquared, model_int.rsquared],
+    "Adj R²":  [model_slr.rsquared_adj, model_mlr.rsquared_adj, model_int.rsquared_adj],
+    "AIC":     [model_slr.aic, model_mlr.aic, model_int.aic],
+    "BIC":     [model_slr.bic, model_mlr.bic, model_int.bic],
+}).round(3)
+
+summary_tbl
+```
+
+> **Lower AIC/BIC** = better model fit penalised for complexity. **Higher Adj R²** = more variance explained without overfitting.
+
+---
+
+# Summary
+
+| Concept | Key Takeaway |
+|---------|-------------|
+| **OLS assumptions** | Linearity, independence, homoscedasticity, normality of errors |
+| **`smf.ols()`** | R-style formula interface — readable and flexible |
+| **`.summary()`** | Coefficients, SE, t-stats, p-values, R², F-stat in one table |
+| **Diagnostics** | Always check residual plots and VIF before trusting inference |
+| **Logistic regression** | Use `smf.logit()` for binary outcomes; interpret via odds ratios |
+
+---
+
+::: {.callout-tip}
+## Next Steps
+- Generalised Linear Models (`sm.GLM`) for count and proportion data
+- Mixed-effects models (`smf.mixedlm`) for repeated measures
+- Robust standard errors (`.get_robustcov_results()`) for heteroscedastic data
+:::

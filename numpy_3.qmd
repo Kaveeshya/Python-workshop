@@ -1,0 +1,200 @@
+---
+title: "Computation on NumPy Arrays"
+author: N.G.S. Minimuthu
+format:
+  html:
+    theme: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-copy: true
+    code-fold: show
+---
+
+# Universal Functions (UFuncs)
+
+Computation on NumPy arrays can be very fast, or it can be very slow. The key to making it fast is to use **vectorized operations** — applying an operation to the whole array at once instead of looping through each element.
+
+> These vectorized operations are implemented through NumPy's **universal functions**. Any time you see a loop over an array in Python, think about whether a ufunc can replace it.
+
+
+---
+
+# Array Arithmetic
+
+NumPy uses Python's standard arithmetic operators directly on arrays. Each operator applies to every element at once.
+
+::: {.panel-tabset}
+
+## NumPy (Python)
+
+```{python}
+import numpy as np
+
+x = np.arange(4)
+print("x      =", x)
+print("x + 5  =", x + 5)
+print("x - 2  =", x - 2)
+print("x * 3  =", x * 3)
+print("x / 2  =", x / 2)
+print("x // 2 =", x // 2)   # floor division
+print("x ** 2 =", x ** 2)   # exponentiation
+print("x % 2  =", x % 2)    # modulus
+```
+
+
+
+- `//` is floor division (drops the decimal), `**` is power, `%` is the remainder.
+
+## Base R
+
+```{r}
+x <- 0:3
+x <- 0:3
+print(x + 5)
+print(x - 2)
+print(x * 3)
+print(x / 2)
+print(x %/% 2)  # floor division
+print(x ^ 2)     # exponentiation
+print(x %% 2)    # modulus
+```
+
+
+- The operators are nearly identical, with minor syntax differences: `^` instead of `**`, `%/%` instead of `//`.
+
+:::
+
+---
+
+# Useful Math Functions
+
+Beyond basic arithmetic, NumPy provides functions for absolute values, trigonometry, exponentials, and logarithms — all applied element-wise.
+
+::: {.panel-tabset}
+
+## NumPy (Python)
+
+```{python}
+import numpy as np
+
+# Absolute value
+x = np.array([-3, -1, 0, 1, 3])
+print("abs:", np.abs(x))
+
+# Trigonometry
+theta = np.linspace(0, np.pi, 3)
+print("sin:", np.sin(theta).round(2))
+print("cos:", np.cos(theta).round(2))
+
+# Exponentials and logarithms
+x = np.array([1, 2, 3])
+print("e^x:    ", np.exp(x).round(3))
+print("ln(x):  ", np.log(x).round(3))
+print("log2(x):", np.log2(x).round(3))
+```
+
+
+## Base R
+
+```{r}
+# Absolute value
+x <- c(-3, -1, 0, 1, 3)
+print(abs(x))
+
+# Trigonometry
+theta <- seq(0, pi, length.out = 3)
+print(round(sin(theta), 2))
+print(round(cos(theta), 2))
+
+# Exponentials and logarithms
+x <- c(1, 2, 3)
+print(round(exp(x), 3))
+print(round(log(x), 3))
+print(round(log2(x), 3))
+```
+
+### What Happened?
+
+- R's `abs()`, `sin()`, `cos()`, `exp()`, `log()` and `log2()` work exactly the same way.
+- The function names are almost identical.
+
+:::
+
+---
+
+# Aggregations
+
+After doing computations, you often want to summarise an array into a single value — the sum, mean, min, or max.
+
+::: {.panel-tabset}
+
+## NumPy (Python)
+
+```{python}
+import numpy as np
+
+np.random.seed(0)
+arr = np.random.randint(1, 100, size=6)
+print("Array:", arr)
+
+print("sum:   ", arr.sum())
+print("min:   ", arr.min())
+print("max:   ", arr.max())
+print("mean:  ", arr.mean().round(2))
+print("std:   ", arr.std().round(2))
+print("median:", np.median(arr))
+```
+
+
+- You can call them as `np.sum(arr)` or as a method directly on the array: `arr.sum()` — both work.
+- Always prefer `arr.sum()` over Python's built-in `sum(arr)` on NumPy arrays — the NumPy version is much faster.
+
+## Base R
+
+```{r}
+set.seed(0)
+arr <- sample(1:99, 6, replace = TRUE)
+cat("Array:", arr, "\n")
+
+print(arr)
+print(sum(arr))
+print(min(arr))
+print(max(arr))
+print(round(mean(arr), 2))
+print(round(sd(arr), 2))
+print(median(arr))
+```
+
+### What Happened?
+
+- R's aggregation functions are identical in concept: `sum()`, `min()`, `max()`, `mean()`, `sd()`, `median()`.
+- The main difference is that in NumPy you can call them as methods on the array itself (`arr.mean()`), which R does not do.
+
+:::
+
+
+---
+
+# NumPy vs R: Computation Quick Reference
+
+| Task | NumPy (Python) | Base R |
+|------|---------------|--------|
+| Add scalar | `x + 5` | `x + 5` |
+| Power | `x ** 2` | `x ^ 2` |
+| Floor division | `x // 2` | `x %/% 2` |
+| Modulus | `x % 2` | `x %% 2` |
+| Absolute value | `np.abs(x)` | `abs(x)` |
+| Sine / Cosine | `np.sin(x)` / `np.cos(x)` | `sin(x)` / `cos(x)` |
+| Natural log | `np.log(x)` | `log(x)` |
+| Exponential | `np.exp(x)` | `exp(x)` |
+| Sum | `arr.sum()` | `sum(arr)` |
+| Min / Max | `arr.min()` / `arr.max()` | `min(arr)` / `max(arr)` |
+| Mean | `arr.mean()` | `mean(arr)` |
+| Standard deviation | `arr.std()` | `sd(arr)` |
+| Median | `np.median(arr)` | `median(arr)` |
+
+
+> If you already know R, NumPy computation will feel very familiar. The operators and function names are almost the same — the biggest difference is that in NumPy you can call aggregations as methods directly on the array (`arr.mean()`).
+
+

@@ -1,0 +1,64 @@
+project:
+  type: website
+execute:
+  eval: false
+website:
+  title: "Python for Data Science"
+  navbar:
+    left:
+      - href: index.qmd
+        text: "🏠 Home"
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
+      - href: index.qmd
+        text: "🏠 Introduction to Python for Statistics"
+
+      - section: "🐍 Python Basics"
+        contents:
+          - href: python_basics_and_libraries_v10_with_toc.qmd
+            text: "Python Basics & Key Libraries"
+          - href: Python_Modules_and_Packages.qmd
+            text: "Python Modules and Packages"
+
+      - section: "🔢 Working with NumPy"
+        contents:
+          - href: numpy_arrays_basics.qmd
+            text: "The Basics of NumPy Arrays"
+          - href: numpy_3.qmd
+            text: "Computation on NumPy Arrays"
+
+      - section: "🐼 Data Manipulation"
+        contents:
+          - href: Pandas_final.qmd
+            text: "Data Manipulation - Python (Pandas)"
+          - href: pandas_teaching.qmd
+            text: "Data Manipulation with Pandas"
+
+      - section: "🎨 Visualization"
+        contents:
+          - href: matplotlib_beginner.qmd
+            text: "Matplotlib"
+          - href: matplotlib_part2.qmd
+            text: "Data Visualization using Matplotlib"
+          - href: matplotlib-part3.qmd
+            text: "Seaborn for Statistical Data Visualization"
+
+      - section: "📉 Statistics & Modelling"
+        contents:
+          - href: regression_statsmodels.qmd
+            text: "Regression With Python"
+          - href: SurvivalWithpython.qmd
+            text: "Survival Analysis With Python"
+          - href: timeseries.qmd
+            text: "Time Series Analysis with Python"
+
+format:
+  html:
+    css:
+      - styles (1).css
+      - stylesnew10.css
+    theme: flatly
+    toc: true
+    toc-location: right

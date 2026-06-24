@@ -1,0 +1,966 @@
+---
+title: "Data Manipulation — Python (Pandas) vs R"
+author: "Y.G.D.M.S.Thathsarani"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-title: "Session Outline"
+    toc-location: right
+    number-sections: true
+    theme: cosmo
+    highlight-style: github
+    code-block-bg: true
+    code-block-border-left: "#4e79a7"
+    df-print: kable
+    self-contained: true
+execute:
+  eval: false
+  echo: true
+---
+
+## Overview 
+
+### What is Pandas?
+
+**Pandas** is an open-source Python library built on top of NumPy for fast, flexible data manipulation and analysis. Created by **Wes McKinney in 2008**, it is the de facto standard for tabular data work in Python.
+
+Its two core data structures are:
+
+- **`Series`** — a 1-D labeled array (like a spreadsheet column)
+- **`DataFrame`** — a 2-D labeled table (like an Excel sheet or SQL table)
+
+### Key Uses
+
+| Use Case | Pandas | R Equivalent |
+|---|---|---|
+| Data loading | `pd.read_csv()`, `pd.read_excel()` | `read.csv()`, `readr::read_csv()` |
+| Data cleaning | `.dropna()`, `.fillna()` | `na.omit()`, `tidyr::fill()` |
+| Transformation | `.merge()`, `.pivot()` | `dplyr::join*()`, `tidyr::pivot_*()` |
+| Exploration | `.groupby()`, `.describe()` | `dplyr::group_by()`, `summary()` |
+| Time series | `pd.DatetimeIndex` | `zoo`, `xts`, `lubridate` |
+
+## Installing & Importing 
+
+| | Python | R |
+|---|---|---|
+| **Install** | `pip install pandas numpy` | `install.packages(c("dplyr","tidyr"))` |
+| **Import** | `import pandas as pd` | `library(dplyr); library(tidyr)` |
+| **Version** | `pd.__version__` | `packageVersion("dplyr")` |
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+import pandas as pd
+import numpy as np
+
+pd.__version__
+```
+```
+#> '3.0.2'
+```
+
+### R
+
+```r
+library(dplyr)
+library(tidyr)
+
+packageVersion("dplyr")
+```
+```
+#> [1] '1.1.4'
+```
+
+:::
+
+::: {.callout-tip}
+R's Pandas equivalents live in the **tidyverse**: `dplyr` for data manipulation, `tidyr` for reshaping. Base R `data.frame` works without any packages.
+:::
+
+---
+
+## The Series Object 
+
+A Pandas `Series` is a **1-D labeled array**. The R equivalent is a **named vector**.
+
+### Creating
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+# From a list (auto integer index)
+s = pd.Series([0.25, 0.5, 0.75, 1.0])
+print(s)
+```
+```
+#> 0    0.25
+#> 1    0.50
+#> 2    0.75
+#> 3    1.00
+#> dtype: float64
+```
+
+```python
+# From a dict (named index)
+population = pd.Series({
+    'California': 38332521,
+    'Texas':      26448193,
+    'New York':   19651127
+})
+print(population)
+```
+```
+#> California    38332521
+#> Texas         26448193
+#> New York      19651127
+#> dtype: int64
+```
+
+### R
+
+```r
+# Unnamed vector
+s <- c(0.25, 0.5, 0.75, 1.0)
+s
+```
+```
+#> [1] 0.25 0.50 0.75 1.00
+```
+
+```r
+# Named vector (≈ dict-based Series)
+population <- c(California = 38332521,
+                Texas      = 26448193,
+                "New York" = 19651127)
+population
+```
+```
+#> California      Texas   New York
+#>   38332521   26448193   19651127
+```
+
+:::
+
+### Indexing & Slicing
+
+| Operation | Python | R |
+|---|---|---|
+| By label | `population['California']` | `population["California"]` |
+| By position | `population.iloc[0]` | `population[1]` *(1-indexed)* |
+| Slice (label) | `population['California':'Texas']` *(inclusive)* | `population[c("California","Texas")]` |
+| Slice (position) | `s[0:2]` *(excludes end)* | `s[1:2]` *(includes end)* |
+| Boolean | `s[s > 0.5]` | `s[s > 0.5]` |
+| Names / Index | `population.index` | `names(population)` |
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+print(population['California'])        # by label
+print(population.iloc[0])             # by position
+print(population['California':'Texas'])# label slice (both ends inclusive)
+print(s[s > 0.5])                     # boolean mask
+```
+```
+#> 38332521
+#> 38332521
+#> California    38332521
+#> Texas         26448193
+#> dtype: int64
+#> 2    0.75
+#> 3    1.00
+#> dtype: float64
+```
+
+### R
+
+```r
+population["California"]              # by label
+population[1]                         # by position (1-indexed)
+population[c("California","Texas")]   # label slice
+s[s > 0.5]                           # boolean mask
+```
+```
+#> California
+#>   38332521
+#> California
+#>   38332521
+#> California      Texas
+#>   38332521   26448193
+#> [1] 0.75 1.00
+```
+
+:::
+
+::: {.callout-important}
+**Indexing difference:** Python is **0-based**; R is **1-based**. Python label slices are inclusive on both ends; positional slices exclude the end. R slices are always inclusive.
+:::
+
+---
+
+## The DataFrame Object 
+
+A `DataFrame` is a **2-D labeled table** — rows and columns both have labels.
+
+### Creating
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+area = pd.Series({'California': 423967, 'Texas': 695662,
+                  'New York': 141297,   'Florida': 170312})
+pop  = pd.Series({'California': 38332521, 'Texas': 26448193,
+                  'New York': 19651127,   'Florida': 19552860})
+
+states = pd.DataFrame({'population': pop, 'area': area})
+print(states)
+```
+```
+#>             population    area
+#> California    38332521  423967
+#> Texas         26448193  695662
+#> New York      19651127  141297
+#> Florida       19552860  170312
+```
+
+### R
+
+```r
+states <- data.frame(
+  population = c(California=38332521, Texas=26448193,
+                 "New York"=19651127, Florida=19552860),
+  area       = c(California=423967,   Texas=695662,
+                 "New York"=141297,   Florida=170312)
+)
+states
+```
+```
+#>            population   area
+#> California   38332521 423967
+#> Texas        26448193 695662
+#> New York     19651127 141297
+#> Florida      19552860 170312
+```
+
+:::
+
+### Essential Operations
+
+| Operation | Python | R |
+|---|---|---|
+| Column access | `states['area']` | `states$area` |
+| Add column | `states['density'] = states['population'] / states['area']` | `states$density <- states$population / states$area` |
+| Dimensions | `states.shape` → `(4, 2)` | `dim(states)` → `4 2` |
+| Column names | `states.columns` | `colnames(states)` |
+| Row names | `states.index` | `rownames(states)` |
+| Transpose | `states.T` | `t(states)` |
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+# Add a derived column
+states['density'] = states['population'] / states['area']
+print(states)
+print("\nshape:", states.shape)
+```
+```
+#>             population    area     density
+#> California    38332521  423967   90.413926
+#> Texas         26448193  695662   38.018740
+#> New York      19651127  141297  139.076746
+#> Florida       19552860  170312  114.806121
+#>
+#> shape: (4, 3)
+```
+
+### R
+
+```r
+# Add a derived column
+states$density <- states$population / states$area
+states
+cat("dim:", dim(states), "\n")
+```
+```
+#>            population   area   density
+#> California   38332521 423967  90.41393
+#> Texas        26448193 695662  38.01874
+#> New York     19651127 141297 139.07675
+#> Florida      19552860 170312 114.80612
+#>
+#> dim: 4 3
+```
+
+:::
+
+### Constructing from Other Sources
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+# From list of dicts — missing keys become NaN
+pd.DataFrame([{'a': 1, 'b': 2}, {'b': 3, 'c': 4}])
+```
+```
+#>      a  b    c
+#> 0  1.0  2  NaN
+#> 1  NaN  3  4.0
+```
+
+```python
+# From NumPy array
+np.random.seed(42)
+pd.DataFrame(np.random.rand(3, 2), columns=['foo', 'bar'])
+```
+```
+#>         foo       bar
+#> 0  0.374540  0.950714
+#> 1  0.731994  0.598658
+#> 2  0.156019  0.155995
+```
+
+### R
+
+```r
+# From list — missing values become NA
+data.frame(a=c(1,NA), b=c(2,3), c=c(NA,4))
+```
+```
+#>    a b  c
+#> 1  1 2 NA
+#> 2 NA 3  4
+```
+
+```r
+# From matrix
+set.seed(42)
+matrix(runif(6), nrow=3, ncol=2) |>
+  as.data.frame() |> setNames(c("foo","bar"))
+```
+```
+#>         foo       bar
+#> 1 0.9148060 0.8304476
+#> 2 0.9370754 0.6417455
+#> 3 0.2861395 0.5190959
+```
+
+:::
+
+---
+
+## Data Indexing & Selection 
+
+### Three Ways to Index a DataFrame (Python)
+
+| Indexer | Selects by | Example |
+|---|---|---|
+| `df['col']` | Column label | `states['area']` |
+| `df.loc[row, col]` | **Label** (both axes) | `states.loc['Texas', 'area']` |
+| `df.iloc[row, col]` | **Integer position** (both axes) | `states.iloc[1, 1]` |
+
+R uses `df[row, col]` for both — strings for labels, integers for positions.
+
+### Position-based & Label-based
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+# First 3 rows, first 2 columns — position-based
+states.iloc[:3, :2]
+```
+```
+#>             population    area
+#> California    38332521  423967
+#> Texas         26448193  695662
+#> New York      19651127  141297
+```
+
+```python
+# Label-based: specific row + column
+states.loc['Texas', 'area']
+```
+```
+#> 695662
+```
+
+### R
+
+```r
+# First 3 rows, first 2 columns — position-based
+states[1:3, 1:2]
+```
+```
+#>            population   area
+#> California   38332521 423967
+#> Texas        26448193 695662
+#> New York     19651127 141297
+```
+
+```r
+# Label-based: specific row + column
+states["Texas", "area"]
+```
+```
+#> [1] 695662
+```
+
+:::
+
+### Boolean Masking & Column Selection
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+# Rows where density > 100, select two columns
+states.loc[states['density'] > 100, ['population', 'density']]
+```
+```
+#>           population     density
+#> New York    19651127  139.076746
+#> Florida     19552860  114.806121
+```
+
+### R
+
+```r
+# Base R
+states[states$density > 100, c("population", "density")]
+```
+```
+#>          population  density
+#> New York   19651127 139.0767
+#> Florida    19552860 114.8061
+```
+
+```r
+# dplyr (more readable for complex filters)
+states %>% filter(density > 100) %>% select(population, density)
+```
+```
+#>          population  density
+#> New York   19651127 139.0767
+#> Florida    19552860 114.8061
+```
+
+:::
+
+::: {.callout-important}
+**Key difference:** Python's `loc` (label) and `iloc` (position) are explicit separate indexers. R uses `[row, col]` for both — the type of value (string vs integer) determines the mode.
+:::
+
+---
+
+## Operating on Data 
+
+### NumPy UFuncs Preserve Labels
+
+Pandas operations preserve index and column labels automatically.
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+ser = pd.Series([6, 3, 7, 4])
+np.exp(ser)           # index preserved
+```
+```
+#> 0     403.428793
+#> 1      20.085537
+#> 2    1096.633158
+#> 3      54.598150
+#> dtype: float64
+```
+
+### R
+
+```r
+ser <- c(6, 3, 7, 4)
+round(exp(ser), 4)    # names preserved if named
+```
+```
+#> [1]  403.4288   20.0855 1096.6332   54.5982
+```
+
+:::
+
+### Automatic Index Alignment
+
+This is one of Pandas' most powerful features — and one R **does not** do automatically.
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+area = pd.Series({'Alaska': 1723337, 'Texas': 695662, 'California': 423967})
+pop  = pd.Series({'California': 38332521, 'Texas': 26448193, 'New York': 19651127})
+
+pop / area    # unmatched keys fill with NaN — automatically
+```
+```
+#> Alaska              NaN
+#> California    90.413926
+#> New York            NaN
+#> Texas         38.018740
+#> dtype: float64
+```
+
+### R
+
+```r
+area <- c(Alaska=1723337, Texas=695662, California=423967)
+pop  <- c(California=38332521, Texas=26448193, "New York"=19651127)
+
+# R does NOT auto-align — manual intersection required
+common <- intersect(names(pop), names(area))
+pop[common] / area[common]
+```
+```
+#> California      Texas
+#>   90.41393   38.01874
+```
+
+:::
+
+::: {.callout-tip}
+**Pandas fill value trick:** Use `A.add(B, fill_value=0)` to treat missing index entries as 0 rather than NaN when adding two Series.
+:::
+
+### Arithmetic Method Equivalents
+
+| Python operator | Pandas method | R |
+|---|---|---|
+| `+` | `.add(fill_value=)` | `+` |
+| `-` | `.sub()` | `-` |
+| `*` | `.mul()` | `*` |
+| `/` | `.div()` | `/` |
+| `//` | `.floordiv()` | `%/%` |
+| `**` | `.pow()` | `^` |
+
+---
+
+## Handling Missing Data 
+
+### How Missing Values Are Represented
+
+| | Python (Pandas) | R |
+|---|---|---|
+| General | `np.nan` / `None` | `NA` |
+| Float | `np.nan` (IEEE 754) | `NA_real_` |
+| Integer | ⚠️ Upcasts column to `float64` | `NA_integer_` (native) |
+| String | `None` | `NA_character_` |
+
+::: {.callout-important}
+R has **typed NAs** — an integer column stays integer even with missing values. Pandas converts integer columns to `float64` when any `NaN` is introduced.
+:::
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+# Integer array becomes float64 when NaN added
+vals = np.array([1, np.nan, 3, 4])
+print("dtype:", vals.dtype)
+
+s = pd.Series([1, np.nan, 2, None])
+print(s)
+```
+```
+#> dtype: float64
+#> 0    1.0
+#> 1    NaN
+#> 2    2.0
+#> 3    NaN
+#> dtype: float64
+```
+
+### R
+
+```r
+# Integer stays integer with NA
+vals <- c(1L, NA_integer_, 3L, 4L)
+cat("class:", class(vals), "\n")
+
+s <- c(1, NA, 2, NA)
+print(s)
+```
+```
+#> class: integer
+#> [1]  1 NA  2 NA
+```
+
+:::
+
+### Detecting, Dropping & Filling
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+df = pd.DataFrame([[1, np.nan, 2],
+                   [2, 3,      5],
+                   [np.nan, 4, 6]])
+
+# Detect
+print(df.isnull())
+
+# Drop rows with ANY missing
+print(df.dropna())
+
+# Drop cols with ANY missing
+print(df.dropna(axis='columns'))
+
+# Fill with constant
+print(df.fillna(0))
+
+# Forward / back fill
+s = pd.Series([1, np.nan, 2, np.nan, 3], index=list('abcde'))
+print(s.ffill())
+print(s.bfill())
+```
+```
+#>        0      1      2
+#> 0  False   True  False
+#> 1  False  False  False
+#> 2   True  False  False
+#>
+#>      0    1  2
+#> 1  2.0  3.0  5
+#>
+#>    2
+#> 0  2
+#> 1  5
+#> 2  6
+#>
+#>      0    1  2
+#> 0  1.0  0.0  2
+#> 1  2.0  3.0  5
+#> 2  0.0  4.0  6
+#>
+#> a    1.0
+#> b    1.0
+#> c    2.0
+#> d    2.0
+#> e    3.0
+#> dtype: float64
+#> a    1.0
+#> b    2.0
+#> c    2.0
+#> d    3.0
+#> e    3.0
+#> dtype: float64
+```
+
+### R
+
+```r
+df <- data.frame(V1=c(1,2,NA), V2=c(NA,3,4), V3=c(2,5,6))
+
+# Detect
+print(is.na(df))
+
+# Drop rows with ANY missing
+print(na.omit(df))
+
+# Drop cols with ANY missing
+print(df[, colSums(is.na(df)) == 0, drop=FALSE])
+
+# Fill with constant
+df_fill <- df; df_fill[is.na(df_fill)] <- 0
+print(df_fill)
+
+# Forward / back fill (tidyr)
+data_fill <- c(a=1, b=NA, c=2, d=NA, e=3)
+print(fill(data.frame(x=data_fill), x, .direction="down")$x)
+print(fill(data.frame(x=data_fill), x, .direction="up")$x)
+```
+```
+#>       V1    V2    V3
+#> [1,] FALSE  TRUE FALSE
+#> [2,] FALSE FALSE FALSE
+#> [3,]  TRUE FALSE FALSE
+#>
+#>   V1 V2 V3
+#> 2  2  3  5
+#>
+#>   V3
+#> 1  2
+#> 2  5
+#> 3  6
+#>
+#>   V1 V2 V3
+#> 1  1  0  2
+#> 2  2  3  5
+#> 3  0  4  6
+#>
+#> [1] 1 1 2 2 3
+#> [1] 1 2 2 3 3
+```
+
+:::
+
+---
+
+## Hierarchical Indexing 
+
+Pandas `MultiIndex` stores multi-level labels on rows or columns. R uses a **long-format data frame** with grouping columns and `tidyr` for reshaping.
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+# Create MultiIndex Series
+index = pd.MultiIndex.from_product(
+    [['California','New York','Texas'], [2000, 2010]],
+    names=['state', 'year'])
+pop = pd.Series(
+    [33871648, 37253956, 18976457, 19378102, 20851820, 25145561],
+    index=index)
+print(pop)
+```
+```
+#> state       year
+#> California  2000    33871648
+#>             2010    37253956
+#> New York    2000    18976457
+#>             2010    19378102
+#> Texas       2000    20851820
+#>             2010    25145561
+#> dtype: int64
+```
+
+```python
+# Partial index & unstack → wide table
+print(pop['California'])          # one state
+print(pop.unstack())              # long → wide
+```
+```
+#> year
+#> 2000    33871648
+#> 2010    37253956
+#> dtype: int64
+#>
+#> year            2000      2010
+#> state
+#> California  33871648  37253956
+#> New York    18976457  19378102
+#> Texas       20851820  25145561
+```
+
+### R
+
+```r
+# Equivalent: long-format data frame
+pop <- data.frame(
+  state      = rep(c("California","New York","Texas"), each=2),
+  year       = rep(c(2000, 2010), times=3),
+  population = c(33871648,37253956,18976457,19378102,20851820,25145561))
+print(pop)
+```
+```
+#>        state year population
+#> 1 California 2000   33871648
+#> 2 California 2010   37253956
+#> 3   New York 2000   18976457
+#> 4   New York 2010   19378102
+#> 5      Texas 2000   20851820
+#> 6      Texas 2010   25145561
+```
+
+```r
+# Filter one group (≈ partial index)
+pop %>% filter(state == "California")
+
+# Long → wide (≈ unstack)
+pop %>% pivot_wider(names_from=year, values_from=population)
+```
+```
+#>        state year population
+#> 1 California 2000   33871648
+#> 2 California 2010   37253956
+#>
+#>        state     2000     2010
+#> 1 California 33871648 37253956
+#> 2   New York 18976457 19378102
+#> 3      Texas 20851820 25145561
+```
+
+:::
+
+::: {.callout-tip}
+`unstack()` / `stack()` in Pandas ↔ `pivot_wider()` / `pivot_longer()` in tidyr — same concept, different syntax.
+:::
+
+---
+
+## Combining Datasets: Concat & Append 
+
+### `pd.concat()` — the one function for all stacking
+
+::: {.panel-tabset}
+
+### Python
+
+```python
+def make_df(cols, ind):
+    return pd.DataFrame(
+        {c: [str(c)+str(i) for i in ind] for c in cols}, ind)
+
+df1 = make_df('AB', [1,2]); df2 = make_df('AB', [3,4])
+df3 = make_df('AB', [0,1]); df4 = make_df('CD', [0,1])
+
+# Row-wise (default axis=0)
+print(pd.concat([df1, df2]))
+```
+```
+#>     A   B
+#> 1  A1  B1
+#> 2  A2  B2
+#> 3  A3  B3
+#> 4  A4  B4
+```
+
+```python
+# Column-wise (axis=1)
+print(pd.concat([df3, df4], axis=1))
+```
+```
+#>     A   B   C   D
+#> 0  A0  B0  C0  D0
+#> 1  A1  B1  C1  D1
+```
+
+```python
+# Mismatched columns — outer join fills NaN (default)
+df5 = make_df('ABC',[1,2]); df6 = make_df('BCD',[3,4])
+print(pd.concat([df5, df6]))          # outer (default)
+print(pd.concat([df5, df6], join='inner'))  # inner: shared cols only
+```
+```
+#>      A   B   C    D
+#> 1   A1  B1  C1  NaN
+#> 2   A2  B2  C2  NaN
+#> 3  NaN  B3  C3   D3
+#> 4  NaN  B4  C4   D4
+#>
+#>     B   C
+#> 1  B1  C1
+#> 2  B2  C2
+#> 3  B3  C3
+#> 4  B4  C4
+```
+
+```python
+# Label source rows with keys → creates MultiIndex
+print(pd.concat([df1, df2], keys=['x','y']))
+```
+```
+#>       A   B
+#> x 1  A1  B1
+#>   2  A2  B2
+#> y 3  A3  B3
+#>   4  A4  B4
+```
+
+### R
+
+```r
+df1 <- data.frame(A=c("A1","A2"), B=c("B1","B2"))
+df2 <- data.frame(A=c("A3","A4"), B=c("B3","B4"))
+df3 <- data.frame(A=c("A0","A1"), B=c("B0","B1"))
+df4 <- data.frame(C=c("C0","C1"), D=c("D0","D1"))
+
+# Row-bind (≈ axis=0 concat)
+rbind(df1, df2)
+```
+```
+#>    A  B
+#> 1 A1 B1
+#> 2 A2 B2
+#> 3 A3 B3
+#> 4 A4 B4
+```
+
+```r
+# Column-bind (≈ axis=1 concat)
+cbind(df3, df4)
+```
+```
+#>    A  B  C  D
+#> 1 A0 B0 C0 D0
+#> 2 A1 B1 C1 D1
+```
+
+```r
+# Mismatched columns — bind_rows fills NA; rbind() would error
+df5 <- data.frame(A=c("A1","A2"), B=c("B1","B2"), C=c("C1","C2"))
+df6 <- data.frame(B=c("B3","B4"), C=c("C3","C4"), D=c("D3","D4"))
+dplyr::bind_rows(df5, df6)        # outer (fills NA)
+```
+```
+#>      A  B  C    D
+#> 1   A1 B1 C1 <NA>
+#> 2   A2 B2 C2 <NA>
+#> 3 <NA> B3 C3   D3
+#> 4 <NA> B4 C4   D4
+```
+
+```r
+# Inner — keep shared columns only
+shared <- intersect(names(df5), names(df6))
+rbind(df5[, shared], df6[, shared])
+```
+```
+#>    B  C
+#> 1 B1 C1
+#> 2 B2 C2
+#> 3 B3 C3
+#> 4 B4 C4
+```
+
+```r
+# Source labelling (≈ keys=)
+df1$source <- "x"; df2$source <- "y"
+dplyr::bind_rows(df1, df2)
+```
+```
+#>    A  B source
+#> 1 A1 B1      x
+#> 2 A2 B2      x
+#> 3 A3 B3      y
+#> 4 A4 B4      y
+```
+
+:::
+
+::: {.callout-warning}
+**`rbind()` vs `bind_rows()`:** Base R `rbind()` **errors** on mismatched columns. `dplyr::bind_rows()` fills missing columns with `NA`, matching `pd.concat()` outer-join behaviour.
+:::
+
+::: {.callout-note}
+**`DataFrame.append()` is gone.** It was deprecated in Pandas 1.4 and removed in Pandas 2.0. Always use `pd.concat()`.
+:::
+
+---
+

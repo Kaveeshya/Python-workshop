@@ -1,0 +1,1144 @@
+---
+title: "Python for Data Science"
+author: "Nathasha"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    highlight-style: github
+    smooth-scroll: true
+    css: stylesnew10.css
+    embed-resources: true
+engine: knitr
+---
+
+```{=html}
+<div class="hero-banner">
+  <div class="hero-content">
+    <div class="hero-icon">🐍</div>
+    <h1>Python for Data Science</h1>
+    <p>Sections 2 Python Basics &amp; Key Libraries</p>
+    <div class="hero-badges">
+      <span class="badge badge-blue">Variables</span>
+      <span class="badge badge-green">Operators</span>
+      <span class="badge badge-orange">Control Flow</span>
+      <span class="badge badge-purple">Functions</span>
+      <span class="badge badge-red">Data Structures</span>
+    </div>
+  </div>
+</div>
+```
+
+::: {.callout-note icon="false"}
+## 📋 About This Section {.unlisted .unnumbered}
+
+This page covers **Section 2** of our Python for Data Science course — the core Python language essentials. Sections 1 (What is Python, Installation & Setup, Python Environment) is covered by our teammates. Key libraries and their deep dives are covered by other teams.
+:::
+
+## Table of Contents {.unnumbered}
+
+- [Python Basics](#sec-basics)
+  - [Variables & Data Types](#sec-variables)
+  - [Operators](#sec-operators)
+  - [Control Flow](#sec-control-flow)
+  - [Functions](#sec-functions)
+  - [Data Structures](#sec-data-structures)
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+# Python Basics {#sec-basics}
+
+> *"Python is an easy to learn, powerful programming language."* — Python Docs
+
+Python is **dynamically typed**, **interpreted**, and built for readability. Here is everything we will cover in this section:
+
+```{mermaid}
+%%| fig-align: center
+flowchart TD
+    ROOT["🐍 Python Basics"] --> V["📦 Variables & Types<br/>int · float · str · bool · None"]
+    ROOT --> O["➕ Operators<br/>Arith · Comparison · Logical"]
+    ROOT --> C["🔀 Control Flow<br/>if · for · while · break"]
+    ROOT --> F["⚙️ Functions<br/>def · return · lambda · scope"]
+    ROOT --> D["🗂️ Data Structures<br/>List · Tuple · Dict · Set"]
+    style ROOT fill:#1e3a5f,color:#fff,font-weight:bold
+    style V  fill:#3b82f6,color:#fff
+    style O  fill:#10b981,color:#fff
+    style C  fill:#f59e0b,color:#fff
+    style F  fill:#8b5cf6,color:#fff
+    style D  fill:#ef4444,color:#fff
+```
+
+------------------------------------------------------------------------
+
+## Variables & Data Types {#sec-variables}
+
+::: concept-intro
+In Python you never declare a type — just assign a value and Python figures out the rest. This is called **dynamic typing**.
+:::
+
+### Core Data Types
+
+```{mermaid}
+%%| fig-align: center
+flowchart LR
+    A["Python<br/>Data Types"] --> B["🔢 int<br/>42, -7, 0"]
+    A --> C["🔡 float<br/>3.14, -0.5"]
+    A --> D["📝 str<br/>'hello'"]
+    A --> E["✅ bool<br/>True / False"]
+    A --> F["∅ None<br/>no value"]
+    style A fill:#1e3a5f,color:#fff,font-weight:bold
+    style B fill:#3b82f6,color:#fff
+    style C fill:#10b981,color:#fff
+    style D fill:#f59e0b,color:#fff
+    style E fill:#8b5cf6,color:#fff
+    style F fill:#6b7280,color:#fff
+```
+
+### Assigning Variables
+
+``` python
+# Assign a variable — no type declaration needed!
+name       = "Alice"     # str
+age        = 30          # int
+height     = 5.6         # float
+is_student = True        # bool
+nothing    = None        # NoneType
+
+print(name, age, height, is_student)
+```
+
+``` code-output
+Alice 30 5.6 True
+```
+
+### Checking & Converting Types
+
+``` python
+print(type(name))        # <class 'str'>
+print(type(age))         # <class 'int'>
+print(type(height))      # <class 'float'>
+print(type(is_student))  # <class 'bool'>
+
+# Type casting
+age_str    = str(age)        # int → string  →  "30"
+height_int = int(height)     # float → int   →  5  (truncates!)
+print(age_str, height_int)
+```
+
+``` code-output
+<class 'str'>
+<class 'int'>
+<class 'float'>
+<class 'bool'>
+30 5
+```
+
+### Working with Strings
+
+``` python
+greeting = "Hello, World!"
+
+print(greeting.upper())                      # HELLO, WORLD!
+print(greeting.lower())                      # hello, world!
+print(greeting.replace("World", "Python"))   # Hello, Python!
+print(len(greeting))                         # 13
+
+# f-strings — the modern, readable way to format output
+language = "Python"
+version  = 3.12
+print(f"I am learning {language} version {version}!")
+```
+
+``` code-output
+HELLO, WORLD!
+hello, world!
+Hello, Python!
+13
+I am learning Python version 3.12!
+```
+
+:::: {.callout-tip icon="false"}
+## 🆚 Python vs R — Variables & Types {.unlisted .unnumbered}
+
+::: panel-tabset
+### Comparison Table
+
+| Feature        | Python            | R                        |
+|----------------|-------------------|--------------------------|
+| Assignment     | `x = 5`           | `x <- 5`                 |
+| Check type     | `type(x)`         | `class(x)`               |
+| No value       | `None`            | `NULL` or `NA`           |
+| String format  | `f"Hello {name}"` | `paste0("Hello ", name)` |
+| Integer suffix | Not needed        | `5L` for integer         |
+
+### Python Code
+
+``` python
+x = 5
+print(type(x))   # <class 'int'>
+name = "Alice"
+print(f"Hello {name}")  # Hello Alice
+missing = None
+```
+
+### R Code
+
+``` r
+x <- 5
+class(x)         # [1] "numeric"
+name <- "Alice"
+paste0("Hello ", name)  # [1] "Hello Alice"
+missing <- NULL
+```
+:::
+
+> **Key difference:** R uses `<-` by convention; Python always uses `=`. Python's `None` ≈ R's `NULL`. R also has `NA` for missing data — Python handles this through Pandas (`NaN`).
+::::
+
+------------------------------------------------------------------------
+
+## Operators {#sec-operators}
+
+### Arithmetic Operators
+
+``` python
+a = 17
+b = 5
+
+print(a + b)    # Addition
+print(a - b)    # Subtraction
+print(a * b)    # Multiplication
+print(a / b)    # Division        → always returns float
+print(a // b)   # Floor division  → integer result
+print(a % b)    # Modulus         → remainder
+print(a ** b)   # Exponentiation
+```
+
+``` code-output
+22          ← Addition
+12          ← Subtraction
+85          ← Multiplication
+3.4         ← Division  (always float!)
+3           ← Floor division
+2           ← Modulus (remainder)
+1419857     ← Exponentiation
+```
+
+### Comparison & Logical Operators
+
+::::: columns
+::: {.column width="50%"}
+**Comparison — return True or False**
+
+``` python
+x = 10
+print(x == 10)  # True  — equal
+print(x != 5)   # True  — not equal
+print(x > 8)    # True  — greater
+print(x < 8)    # False — less
+print(x >= 10)  # True  — ≥
+print(x <= 10)  # True  — ≤
+```
+
+``` code-output
+True
+True
+True
+False
+True
+True
+```
+:::
+
+::: {.column width="50%"}
+**Logical — combine conditions**
+
+``` python
+a = True
+b = False
+
+print(a and b)  # False — both True?
+print(a or b)   # True  — either True?
+print(not a)    # False — opposite
+
+# Practical example
+age = 22
+has_id = True
+print(age >= 18 and has_id)  # True
+```
+
+``` code-output
+False
+True
+False
+
+True
+```
+:::
+:::::
+
+:::: {.callout-tip icon="false"}
+## 🆚 Python vs R — Operators {.unlisted .unnumbered}
+
+::: panel-tabset
+### Comparison Table
+
+| Operation        | Python | R                            |
+|------------------|--------|------------------------------|
+| Exponentiation   | `**`   | `^`                          |
+| Integer division | `//`   | `%/%`                        |
+| Modulus          | `%`    | `%%`                         |
+| Logical AND      | `and`  | `&&` (scalar) / `&` (vector) |
+| Logical OR       | `or`   | `||` (scalar) / `|` (vector) |
+| Logical NOT      | `not`  | `!`                          |
+
+### Python Code
+
+``` python
+print(2 ** 8)        # 256
+print(17 // 5)       # 3
+print(17 % 5)        # 2
+print(True and False)# False
+```
+
+### R Code
+
+``` r
+2 ^ 8          # [1] 256
+17 %/% 5       # [1] 3
+17 %% 5        # [1] 2
+TRUE && FALSE  # [1] FALSE
+```
+:::
+
+> **Key difference:** R has two forms of AND/OR: `&&`/`||` for single values, `&`/`|` for vectors. Python's `and`/`or` only work on single values — use NumPy for vector logic.
+::::
+
+------------------------------------------------------------------------
+
+## Control Flow {#sec-control-flow}
+
+### `if` / `elif` / `else`
+
+::::: columns
+::: {.column width="55%"}
+``` python
+score = 78
+
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+elif score >= 70:
+    grade = "C"
+else:
+    grade = "F"
+
+print(f"Score: {score} → Grade: {grade}")
+```
+
+``` code-output
+Score: 78 → Grade: C
+```
+:::
+
+::: {.column width="45%"}
+```{mermaid}
+flowchart TD
+    S([score = 78]) --> A{score ≥ 90?}
+    A -- Yes --> GA["grade = 'A'"]
+    A -- No --> B{score ≥ 80?}
+    B -- Yes --> GB["grade = 'B'"]
+    B -- No --> C{score ≥ 70?}
+    C -- Yes --> GC["grade = 'C' ✓"]
+    C -- No --> GF["grade = 'F'"]
+    style GC fill:#22c55e,color:#fff
+    style S fill:#1e3a5f,color:#fff
+```
+:::
+:::::
+
+::: {.callout-warning icon="false"}
+## ⚠️ Indentation is Mandatory! {.unlisted .unnumbered}
+
+Python uses **spaces/indentation** to define code blocks — not curly braces. Getting indentation wrong causes an `IndentationError`.
+
+``` python
+# ✅ Correct — 4 spaces {.unlisted .unnumbered}
+if True:
+    print("correct")
+
+# ❌ Wrong — no indentation {.unlisted .unnumbered}
+if True:
+print("error!")     # IndentationError!
+```
+:::
+
+### `for` Loops
+
+::::: columns
+::: {.column width="60%"}
+``` python
+# Loop over a range
+for i in range(1, 6):
+    print(f"  {i} squared = {i**2}")
+```
+
+``` code-output
+  1 squared = 1
+  2 squared = 4
+  3 squared = 9
+  4 squared = 16
+  5 squared = 25
+```
+
+``` python
+# Loop over a list
+fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    print(f"  I like {fruit}")
+```
+
+``` code-output
+  I like apple
+  I like banana
+  I like cherry
+```
+
+``` python
+# enumerate() gives index + value
+for i, fruit in enumerate(fruits):
+    print(f"  [{i}] {fruit}")
+```
+
+``` code-output
+  [0] apple
+  [1] banana
+  [2] cherry
+```
+:::
+
+::: {.column width="40%"}
+```{mermaid}
+flowchart TD
+    R["range(1, 6)"] --> I{i = 1,2,3,4,5<br/>more items?}
+    I -- Yes --> P["print(i squared)"]
+    P --> I
+    I -- No --> E([End])
+    style R fill:#1e3a5f,color:#fff
+    style E fill:#22c55e,color:#fff
+```
+:::
+:::::
+
+### `while` Loops & Loop Control
+
+:::::::::::::::::::::: columns
+::: {.column width="50%"}
+``` python
+count = 0
+while count < 5:
+    print(f"  count = {count}")
+    count += 1
+print("Done!")
+```
+
+``` code-output
+  count = 0
+  count = 1
+  count = 2
+  count = 3
+  count = 4
+Done!
+```
+:::
+
+::: {.column width="50%"}
+``` python
+# break — stop the loop early
+for i in range(10):
+    if i == 5:
+        break
+    print(i, end=" ")
+print()
+
+# continue — skip current iteration
+for i in range(10):
+    if i % 2 == 0:
+        continue
+    print(i, end=" ")
+```
+
+``` code-output
+0 1 2 3 4 
+1 3 5 7 9
+```
+:::
+
+:::: {.callout-tip icon="false"}
+## 🆚 Python vs R — Control Flow {.unlisted .unnumbered}
+
+::: panel-tabset
+### Comparison Table
+
+| Feature       | Python              | R                       |
+|---------------|---------------------|-------------------------|
+| if block      | `if cond:` + indent | `if (cond) { }`         |
+| for loop      | `for x in seq:`     | `for (x in seq) { }`    |
+| while loop    | `while cond:`       | `while (cond) { }`      |
+| Vectorised if | list comprehension  | `ifelse(cond, yes, no)` |
+| Index start   | **0**               | **1**                   |
+
+### Python Code
+
+``` python
+for i in range(1, 4):
+    if i == 2:
+        print(f"Found {i}!")
+    else:
+        print(i)
+```
+
+### R Code
+
+``` r
+for (i in 1:3) {
+  if (i == 2) {
+    cat("Found", i, "!\n")
+  } else {
+    print(i)
+  }
+}
+```
+:::
+
+> **Key difference:** Python uses **4-space indentation** as syntax — not optional. R uses `{ }` braces. Also, `range(1, 6)` in Python gives `1,2,3,4,5` (stop is exclusive), while `1:6` in R gives `1,2,3,4,5,6` (stop is inclusive).
+::::
+
+------------------------------------------------------------------------
+
+## Functions {#sec-functions}
+
+::: concept-intro
+Functions let you **reuse code**. Define once with `def`, call many times. Use `return` to send a value back.
+:::
+
+```{mermaid}
+%%| fig-align: center
+flowchart LR
+    A["def greet(name):"] --> B["📥 Parameter<br/>name"]
+    B --> C["'''docstring'''<br/>return f'Hello {name}'"]
+    C --> D["📤 Return value<br/>'Hello Alice'"]
+    G["greet('Alice')"] --> B
+    style A fill:#1e3a5f,color:#fff
+    style D fill:#22c55e,color:#fff
+    style G fill:#3b82f6,color:#fff
+```
+
+### Basic Functions
+
+``` python
+def greet(name):
+    """Return a greeting message."""
+    return f"Hello, {name}!"
+
+print(greet("Alice"))
+print(greet("Bob"))
+```
+
+``` code-output
+Hello, Alice!
+Hello, Bob!
+```
+
+### Default Arguments & `*args` / `**kwargs`
+
+::::: columns
+::: {.column width="50%"}
+``` python
+# Default argument values
+def power(base, exponent=2):
+    return base ** exponent
+
+print(power(3))       # uses default
+print(power(3, 3))    # override default
+print(power(2, 10))
+```
+
+``` code-output
+9
+27
+1024
+```
+
+``` python
+# *args — extra positional args
+def total(*args):
+    return sum(args)
+
+print(total(1, 2, 3))
+print(total(10, 20, 30, 40))
+```
+
+``` code-output
+6
+100
+```
+:::
+
+::: {.column width="50%"}
+``` python
+# **kwargs — keyword arguments
+def describe(**kwargs):
+    for key, value in kwargs.items():
+        print(f"  {key}: {value}")
+
+describe(name="Alice",
+         age=30,
+         city="Colombo")
+```
+
+``` code-output
+  name: Alice
+  age: 30
+  city: Colombo
+```
+:::
+:::::
+
+### Scope & Docstrings
+
+``` python
+x = "global"
+
+def show_scope():
+    x = "local"    # different variable!
+    print(f"Inside: x = '{x}'")
+
+show_scope()
+print(f"Outside: x = '{x}'")
+```
+
+``` code-output
+Inside: x = 'local'
+Outside: x = 'global'
+```
+
+### Lambda Functions
+
+::: {.callout-note icon="false"}
+## 💡 What is a Lambda? {.unlisted .unnumbered}
+
+A **lambda** is a tiny, anonymous, one-line function. Use it when you need a quick function without defining a full `def` block.
+:::
+
+``` python
+# Regular function vs lambda — same result
+def square(x):
+    return x ** 2
+
+square_lambda = lambda x: x ** 2
+
+print(square(5))          # 25
+print(square_lambda(5))   # 25
+
+# Lambda shines inside other functions
+numbers = [3, 1, 4, 1, 5, 9, 2, 6]
+sorted_desc = sorted(numbers, key=lambda x: -x)
+print(sorted_desc)
+```
+
+``` code-output
+25
+25
+[9, 6, 5, 4, 3, 2, 1, 1]
+```
+
+:::: {.callout-tip icon="false"}
+## 🆚 Python vs R — Functions {.unlisted .unnumbered}
+
+::: panel-tabset
+### Comparison Table
+
+| Feature      | Python              | R                             |
+|--------------|---------------------|-------------------------------|
+| Define       | `def f(x):`         | `f <- function(x) {`          |
+| Return       | Explicit `return x` | Last expression auto-returned |
+| Anonymous    | `lambda x: x*2`     | `function(x) x*2`             |
+| Default args | `def f(x=10):`      | `function(x=10)`              |
+| Docstring    | `"""text"""`        | `#' @description` (roxygen2)  |
+
+### Python Code
+
+``` python
+def add(a, b=10):
+    """Add two numbers."""
+    return a + b
+
+print(add(5))     # 15
+print(add(5, 3))  # 8
+```
+
+### R Code
+
+``` r
+add <- function(a, b = 10) {
+  a + b   # auto-returned!
+}
+
+add(5)    # [1] 15
+add(5, 3) # [1] 8
+```
+:::
+
+> **Key difference:** In R, the **last expression** is automatically returned — no `return` keyword needed. Python always requires an explicit `return`. Both approaches are valid; Python's is more explicit.
+::::
+
+------------------------------------------------------------------------
+
+## Data Structures {#sec-data-structures}
+
+::: concept-intro
+Python has four built-in data structures. Choosing the right one matters for both clarity and performance.
+:::
+
+```{mermaid}
+%%| fig-align: center
+flowchart LR
+    D["Python<br/>Data Structures"] --> L["📋 List<br/>[1, 2, 3]<br/>ordered · mutable"]
+    D --> T["🔒 Tuple<br/>(1, 2, 3)<br/>ordered · immutable"]
+    D --> Di["📖 Dict<br/>{'a': 1}<br/>key-value pairs"]
+    D --> S["🎯 Set<br/>{1, 2, 3}<br/>unique · unordered"]
+    style D fill:#1e3a5f,color:#fff,font-weight:bold
+    style L fill:#3b82f6,color:#fff
+    style T fill:#8b5cf6,color:#fff
+    style Di fill:#f59e0b,color:#fff
+    style S fill:#10b981,color:#fff
+```
+
+### Lists — Ordered & Mutable
+
+``` python
+fruits = ["apple", "banana", "cherry", "date"]
+
+# Indexing — 0-based!
+print(fruits[0])     # first element
+print(fruits[-1])    # last element
+
+# Slicing [start:stop:step]
+print(fruits[1:3])   # middle slice
+print(fruits[::2])   # every other
+
+# Modify
+fruits.append("elderberry")
+fruits.insert(1, "avocado")
+fruits.remove("banana")
+print(fruits)
+```
+
+``` code-output
+apple
+date
+['banana', 'cherry']
+['apple', 'cherry']
+['apple', 'avocado', 'cherry', 'date', 'elderberry']
+```
+
+::: {.callout-important icon="false"}
+## 🔢 0-Based Indexing — The #1 Gotcha for R Users! {.unlisted .unnumbered}
+
+```         
+List:   ["apple",  "banana",  "cherry",  "date"]
+Python:     [0]       [1]        [2]       [3]    ← starts at 0
+R:          [1]       [2]        [3]       [4]    ← starts at 1
+```
+
+The **first element** in Python is always `[0]`. This catches every R programmer when they first learn Python!
+:::
+
+**List Comprehensions** — the Pythonic, compact way to build lists:
+
+``` python
+# [expression for item in iterable if condition]
+squares      = [x**2 for x in range(1, 11)]
+even_squares = [x**2 for x in range(1, 11) if x % 2 == 0]
+
+print(squares)
+print(even_squares)
+```
+
+``` code-output
+[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+[4, 16, 36, 64, 100]
+```
+
+### Tuples — Ordered & Immutable
+
+``` python
+# Parentheses — cannot change after creation
+coordinates = (40.7128, -74.0060)   # lat, lon of New York
+print(coordinates[0])
+
+# Tuple unpacking — elegant!
+lat, lon = coordinates
+print(f"Latitude: {lat}, Longitude: {lon}")
+```
+
+``` code-output
+40.7128
+Latitude: 40.7128, Longitude: -74.006
+```
+
+### Dictionaries — Key-Value Pairs
+
+``` python
+student = {
+    "name":     "Alice",
+    "age":      22,
+    "grades":   [88, 92, 79],
+    "enrolled": True
+}
+
+# Access
+print(student["name"])            # direct access
+print(student.get("gpa", "N/A")) # safe access with default
+
+# Add / update
+student["university"] = "UoM"
+student["age"] = 23
+
+# Iterate
+for key, value in student.items():
+    print(f"  {key:12} → {value}")
+```
+
+``` code-output
+Alice
+N/A
+  name         → Alice
+  age          → 23
+  grades       → [88, 92, 79]
+  enrolled     → True
+  university   → UoM
+```
+
+### Sets — Unique Values
+
+``` python
+# Duplicates are removed automatically
+numbers = {1, 2, 2, 3, 3, 3, 4}
+print(numbers)
+
+# Set operations
+a = {1, 2, 3, 4, 5}
+b = {4, 5, 6, 7, 8}
+
+print("Union:       ", a | b)
+print("Intersection:", a & b)
+print("Difference:  ", a - b)
+```
+
+``` code-output
+{1, 2, 3, 4}
+Union:        {1, 2, 3, 4, 5, 6, 7, 8}
+Intersection: {4, 5}
+Difference:   {1, 2, 3}
+```
+
+:::: {.callout-tip icon="false"}
+## 🆚 Python vs R — Data Structures {.unlisted .unnumbered}
+
+::: panel-tabset
+### Comparison Table
+
+| Python | R Equivalent | Notes |
+|------------------------|------------------------|------------------------|
+| `list` | `list()` | R lists can be named; Python lists are simpler |
+| `tuple` | No direct equivalent | R has no immutable sequence |
+| `dict` | named `list()` | `d["key"]` in Python vs `lst$key` in R |
+| `set` | `unique()` + `intersect()` | R has no set type; uses functions instead |
+| `[x**2 for x in lst]` | `sapply(lst, function(x) x^2)` | List comprehension vs apply family |
+
+### Python Code
+
+``` python
+# List
+nums = [1, 2, 3, 4]
+doubled = [x * 2 for x in nums]
+
+# Dict
+info = {"name": "Alice", "age": 30}
+print(info["name"])
+```
+
+### R Code
+
+``` r
+# Vector
+nums <- c(1, 2, 3, 4)
+doubled <- sapply(nums, function(x) x * 2)
+
+# Named list
+info <- list(name = "Alice", age = 30)
+info$name    # or info[["name"]]
+```
+:::
+::::
+
+------------------------------------------------------------------------
+
+# A Simple Python Program: Data Structures in Action {#sec-complete-program}
+
+::: {.callout-note icon="false"}
+## 📋 What This Program Covers {.unlisted .unnumbered}
+
+This is a beginner-friendly program that shows how Python's four core data structures work together in a real scenario — tracking students and their course data. No external libraries needed — just pure Python.
+:::
+
+We will model a small class of students using **all four data structures** you learned:
+
+```{mermaid}
+%%| fig-align: center
+flowchart LR
+    A["📋 List
+grades &amp; scores"] --> E["🖨️ Print
+Summary"]
+    B["📖 Dictionary
+student records"] --> E
+    C["🔒 Tuple
+course info"] --> E
+    D["🎯 Set
+unique subjects"] --> E
+    style A fill:#3b82f6,color:#fff
+    style B fill:#f59e0b,color:#fff
+    style C fill:#8b5cf6,color:#fff
+    style D fill:#10b981,color:#fff
+    style E fill:#1e3a5f,color:#fff
+```
+
+------------------------------------------------------------------------
+
+## Step 1 — Set Up the Data {.unlisted .unnumbered}
+
+``` python
+# ── Step 1: Use a TUPLE for fixed course information ──────────────
+# Tuples are immutable — course details don't change mid-semester
+course_info = ("Data Science 101", "DSC101", 2025, "Semester 1")
+course_name, course_code, year, semester = course_info
+
+print(f"Course : {course_name} ({course_code})")
+print(f"Period : {semester}, {year}")
+```
+
+``` code-output
+Course : Data Science 101 (DSC101)
+Period : Semester 1, 2025
+```
+
+::: {.callout-tip icon="false"}
+## 💡 Why a Tuple here? {.unlisted .unnumbered}
+
+Course details are **fixed** — they should never accidentally be changed. A tuple enforces that: `course_info[0] = "New Name"` would raise a `TypeError`.
+:::
+
+------------------------------------------------------------------------
+
+## Step 2 — Store Student Records {.unlisted .unnumbered}
+
+``` python
+# ── Step 2: Use a DICTIONARY for each student's record ────────────
+# Dict maps student ID → their data
+students = {
+    "S001": {"name": "Alice",   "grades": [85, 92, 78, 90], "year": 2},
+    "S002": {"name": "Bob",     "grades": [70, 65, 80, 72], "year": 1},
+    "S003": {"name": "Carol",   "grades": [95, 98, 92, 97], "year": 3},
+    "S004": {"name": "David",   "grades": [60, 55, 70, 65], "year": 1},
+    "S005": {"name": "Eve",     "grades": [88, 84, 91, 87], "year": 2},
+}
+
+# Access a specific student
+alice = students["S001"]
+print(f"Student : {alice['name']}")
+print(f"Grades  : {alice['grades']}")
+print(f"Year    : {alice['year']}")
+```
+
+``` code-output
+Student : Alice
+Grades  : [85, 92, 78, 90]
+Year    : 2
+```
+
+------------------------------------------------------------------------
+
+## Step 3 — Analyse Grades with Lists {.unlisted .unnumbered}
+
+``` python
+# ── Step 3: Use a LIST to calculate each student's average ─────────
+# Lists are perfect for ordered collections we want to process
+
+print(f"{'Name':<10} {'Grades':<25} {'Average':>8} {'Result':>8}")
+print("-" * 55)
+
+results = []   # we'll build this list as we go
+
+for sid, info in students.items():
+    grades  = info["grades"]           # this is a list
+    average = sum(grades) / len(grades)
+    result  = "PASS" if average >= 65 else "FAIL"
+
+    results.append({
+        "name":    info["name"],
+        "average": average,
+        "result":  result
+    })
+
+    print(f"{info['name']:<10} {str(grades):<25} {average:>8.1f} {result:>8}")
+```
+
+``` code-output
+Name       Grades                    Average   Result
+-------------------------------------------------------
+Alice      [85, 92, 78, 90]             86.2     PASS
+Bob        [70, 65, 80, 72]             71.8     PASS
+Carol      [95, 98, 92, 97]             95.5     PASS
+David      [60, 55, 70, 65]             62.5     FAIL
+Eve        [88, 84, 91, 87]             87.5     PASS
+```
+
+------------------------------------------------------------------------
+
+## Step 4 — Find Unique Subjects with a Set {.unlisted .unnumbered}
+
+``` python
+# ── Step 4: Use a SET to track unique subjects enrolled ────────────
+# Sets automatically remove duplicates
+
+enrolments = [
+    "Maths", "Python", "Statistics",
+    "Python", "Maths", "Data Viz",
+    "Statistics", "Python", "Machine Learning",
+    "Maths", "Data Viz"
+]
+
+unique_subjects = set(enrolments)
+
+print(f"Total enrolments logged : {len(enrolments)}")
+print(f"Unique subjects offered : {len(unique_subjects)}")
+print(f"Subjects: {sorted(unique_subjects)}")
+
+# Set operations — which subjects are core vs elective?
+core_subjects     = {"Maths", "Python", "Statistics"}
+elective_subjects = unique_subjects - core_subjects
+
+print(f"\nCore subjects    : {sorted(core_subjects)}")
+print(f"Elective subjects: {sorted(elective_subjects)}")
+```
+
+``` code-output
+Total enrolments logged : 11
+Unique subjects offered : 5
+Subjects: ['Data Viz', 'Machine Learning', 'Maths', 'Python', 'Statistics']
+
+Core subjects    : ['Maths', 'Python', 'Statistics']
+Elective subjects: ['Data Viz', 'Machine Learning']
+```
+
+------------------------------------------------------------------------
+
+## Step 5 — Print the Final Summary {.unlisted .unnumbered}
+
+``` python
+# ── Step 5: Combine everything into a final summary ─────────────
+print("=" * 50)
+print(f"  COURSE SUMMARY — {course_name}")
+print("=" * 50)
+
+# Count passes and fails from our results list
+passes = [r for r in results if r["result"] == "PASS"]
+fails  = [r for r in results if r["result"] == "FAIL"]
+
+# Best student — find dict with highest average
+best = max(results, key=lambda r: r["average"])
+
+print(f"  Students enrolled : {len(students)}")
+print(f"  Passed            : {len(passes)}")
+print(f"  Failed            : {len(fails)}")
+print(f"  Top student       : {best['name']} ({best['average']:.1f}%)")
+print(f"  Subjects available: {len(unique_subjects)}")
+print(f"  Course period     : {semester}, {year}")
+print("=" * 50)
+```
+
+``` code-output
+==================================================
+  COURSE SUMMARY — Data Science 101
+==================================================
+  Students enrolled : 5
+  Passed            : 4
+  Failed            : 1
+  Top student       : Carol (95.5%)
+  Subjects available: 5
+  Course period     : Semester 1, 2025
+==================================================
+```
+
+------------------------------------------------------------------------
+
+::: {.callout-note icon="false"}
+## 📋 What Each Step Used {.unlisted .unnumbered}
+
+| Step | Data Structure | Why This One? |
+|------------------------|------------------------|------------------------|
+| **1 — Course info** | `tuple` | Fixed data that must not change |
+| **2 — Student records** | `dict` | Look up any student instantly by ID |
+| **3 — Grade analysis** | `list` | Ordered scores we loop over and calculate |
+| **4 — Unique subjects** | `set` | Automatically removes duplicate enrolments |
+| **5 — Summary** | All four | Combine everything — this is real Python! |
+
+Every concept is pure Python — **no libraries needed**. This is the kind of small program you will write constantly as you learn data science.
+:::
+
+------------------------------------------------------------------------
+
+# Quick Reference {#sec-reference}
+
+## Python Basics at a Glance
+
+| Concept         | Python                | R Equivalent          |
+|-----------------|-----------------------|-----------------------|
+| Assign variable | `x = 5`               | `x <- 5`              |
+| Check type      | `type(x)`             | `class(x)`            |
+| List            | `[1, 2, 3]`           | `c(1, 2, 3)`          |
+| Dict            | `{"a": 1}`            | `list(a=1)`           |
+| if block        | `if x > 0:` + indent  | `if (x > 0) { }`      |
+| for loop        | `for i in range(10):` | `for (i in 1:10) { }` |
+| Define function | `def f(x): return x`  | `f <- function(x) x`  |
+| Anonymous fn    | `lambda x: x * 2`     | `function(x) x * 2`   |
+| First index     | `lst[0]`              | `lst[1]`              |
+
+------------------------------------------------------------------------
+
+::: {.callout-important icon="false"}
+## 🚀 Next Steps — What Other Teams Cover {.unlisted .unnumbered}
+
+| Topic                                        | Who covers it        |
+|----------------------------------------------|----------------------|
+| NumPy — arrays, broadcasting, linear algebra | NumPy team           |
+| Pandas — data wrangling, time-series         | Pandas team          |
+| Matplotlib — plots, themes, visualisations   | Matplotlib team      |
+| statsmodels — regression, survival analysis  | Regression team      |
+| Modules, pip & the import system             | Libraries intro team |
+
+This page is your **Python language foundation** — bookmark it and return to it as you work through the library-specific sections!
+:::
+
+------------------------------------------------------------------------
+
+*Content based on the Python Data Science Handbook by Jake VanderPlas (O'Reilly, 2017). Examples adapted for teaching.*
+::::::::::::::::::::::

@@ -1,0 +1,94 @@
+/* ── Sidebar / TOC ───────────────────────────────────────────── */
+#quarto-sidebar {
+  background: #1e293b;
+  border-right: none;
+  padding-top: 1.5rem;
+}
+
+.sidebar-title {
+  color: #94a3b8 !important;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 1rem 0.5rem;
+}
+
+.sidebar-item .sidebar-item-text {
+  color: #cbd5e1 !important;
+  font-size: 0.88rem;
+  transition: color 0.15s;
+}
+
+.sidebar-item:hover .sidebar-item-text,
+.sidebar-item.active .sidebar-item-text {
+  color: #38bdf8 !important;
+}
+
+.sidebar-item.active > .sidebar-item-container {
+  border-left: 3px solid #38bdf8;
+  background: rgba(56,189,248,0.07);
+  border-radius: 0 6px 6px 0;
+}
+
+/* ── Main content ────────────────────────────────────────────── */
+#quarto-content {
+  padding-left: 2.5rem;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  color: #1e293b;
+  line-height: 1.75;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h1 { border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem; }
+h2 { color: #1d4ed8; margin-top: 2.5rem; }
+h3 { color: #475569; }
+
+/* ── Code blocks ─────────────────────────────────────────────── */
+pre.sourceCode {
+  border-left: 4px solid #38bdf8;
+  border-radius: 6px;
+  background: #f8fafc !important;
+}
+
+/* ── Tables ──────────────────────────────────────────────────── */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+thead tr {
+  background: #1d4ed8;
+  color: white;
+}
+
+th, td {
+  padding: 0.55rem 0.9rem;
+  border: 1px solid #e2e8f0;
+}
+
+tbody tr:nth-child(even) { background: #f1f5f9; }
+tbody tr:hover           { background: #dbeafe; }
+
+/* ── Callout ─────────────────────────────────────────────────── */
+.callout {
+  border-radius: 8px;
+  border-left-width: 5px;
+}
+
+/* ── Figures ─────────────────────────────────────────────────── */
+figure { margin: 1.5rem 0; }
+figcaption {
+  text-align: center;
+  font-size: 0.82rem;
+  color: #64748b;
+  margin-top: 0.4rem;
+}

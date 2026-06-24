@@ -1,0 +1,68 @@
+library(ggplot2)
+
+one_mh_iteration <- function(w, current){
+  # STEP 1: Propose the next chain location
+  proposal <- runif(1, min = current - w, max = current + w)
+  
+  # STEP 2: Decide whether or not to go there
+  proposal_plaus <- dnorm(proposal, 0, 1) * dnorm(6.25, proposal, 0.75)
+  current_plaus  <- dnorm(current, 0, 1) * dnorm(6.25, current, 0.75)
+  alpha <- min(1, proposal_plaus / current_plaus)
+  next_stop <- sample(c(proposal, current), 
+                      size = 1, prob = c(alpha, 1-alpha))
+  
+  # Return the results
+  return(data.frame(proposal, alpha, next_stop))
+}
+
+
+
+
+
+mh_tour <- function(N, w){
+  # 1. Start the chain at location 3
+  current <- 3
+  
+  # 2. Initialize the simulation
+  mu <- rep(0, N)
+  
+  # 3. Simulate N Markov chain stops
+  for(i in 1:N){    
+    # Simulate one iteration
+    sim <- one_mh_iteration(w = w, current = current)
+    
+    # Record next location
+    mu[i] <- sim$next_stop
+    
+    # Reset the current location
+    current <- sim$next_stop
+  }
+  
+  # 4. Return the chain locations
+  return(data.frame(iteration = c(1:N), mu))
+}
+
+set.seed(84735)
+mh_simulation_1 <- mh_tour(N = 5000, w = 1)
+mh_simulation_1
+
+
+ggplot(mh_simulation_1, aes(x = iteration, y = mu)) + 
+  geom_line()
+
+ggplot(mh_simulation_1, aes(x = mu)) + 
+  geom_histogram(aes(y = ..density..), color = "white", bins = 20) + 
+  stat_function(fun = dnorm, args = list(4,0.6), color = "blue")
+
+set.seed(84735)
+mh_simulation_2 <- mh_tour(N = 5000, w = 0.01)
+ggplot(mh_simulation_2, aes(x = iteration, y = mu)) + 
+  geom_line() + 
+  lims(y = c(1.6, 6.4))
+
+
+set.seed(7)
+mh_simulation_3 <- mh_tour(N = 5000, w = 100)
+ggplot(mh_simulation_3, aes(x = iteration, y = mu)) + 
+  geom_line() + 
+  lims(y = c(1.6,6.4))
