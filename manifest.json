@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "locale": "en_US",
+  "platform": "4.3.1",
+  "metadata": {
+    "appmode": "quarto-static",
+    "primary_rmd": "_quarto.yml"
+  },
+  "packages": {},
+  "files": {}
+}
