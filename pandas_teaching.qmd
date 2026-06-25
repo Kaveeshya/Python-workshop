@@ -1,0 +1,435 @@
+---
+title: "🐼 Data Manipulation with Pandas"
+subtitle: "Merging Tables, GroupBy, Pivot Tables, and String Operations"
+author: "S.A.M.Perera - AS2022296"
+format:
+  html:
+    toc: true
+    code-fold: true
+    toc-depth: 3
+    theme: cosmo
+    css: styles.css
+    highlight-style: monokai
+    smooth-scroll: true
+execute:
+  echo: true
+  warning: false
+  message: false
+jupyter: python3
+---
+
+# 🧭 Introduction
+
+::: {.section-intro}
+Real datasets are rarely one tidy table. They're split across files, grouped in odd ways, and full of messy text. This guide walks through four everyday pandas tools that fix exactly that, using one simple, running example: **a small school store**.
+:::
+
+The main topics covered are:
+
+- 🔗 **Merge & Join** — stitch separate tables together
+- 📊 **GroupBy** — summarize rows by category
+- 🧩 **Pivot Tables** — turn long data into a readable grid
+- ✂️ **Vectorized String Operations** — clean and search text columns
+
+```{python}
+import pandas as pd
+import numpy as np
+```
+
+<hr>
+
+# 1️⃣ Combining Tables: Merge & Join
+
+## Introduction
+
+::: {.section-intro}
+Imagine a school store. One table lists students and the club they belong to. A second table lists each club's faculty advisor. They share a column — `club` — and `pd.merge()` uses it to line the rows up correctly, the same way a SQL `JOIN` would.
+:::
+
+## A One-to-One Match
+
+Every student appears once, and every club appears once. This is the simplest case.
+
+```{python}
+students = pd.DataFrame({
+    "name": ["Amal", "Nadi", "Kavi", "Roshi"],
+    "club": ["Chess", "Art", "Drama", "Robotics"]
+})
+
+advisors = pd.DataFrame({
+    "club":    ["Chess", "Art", "Drama", "Robotics"],
+    "advisor": ["Mr. Silva", "Ms. Perera", "Mr. Fonseka", "Ms. Bandara"]
+})
+
+pd.merge(students, advisors)
+```
+
+## A Many-to-One Match
+
+Now suppose several students share the same club. pandas repeats the matching advisor for every student in that club — nothing is lost, nothing is duplicated incorrectly.
+
+```{python}
+students2 = pd.DataFrame({
+    "name": ["Amal", "Sajith", "Nadi", "Roshi"],
+    "club": ["Chess", "Chess", "Art", "Art"]
+})
+
+pd.merge(students2, advisors)
+```
+
+## A Many-to-Many Match
+
+If a club can have several advisors *and* several students share that club, every student gets matched with every advisor for that club.
+
+```{python}
+co_advisors = pd.DataFrame({
+    "club": ["Chess", "Chess", "Art", "Drama"],
+    "advisor": ["Mr. Silva", "Mrs. Costa", "Ms. Perera", "Mr. Fonseka"]
+})
+
+pd.merge(students2, co_advisors)
+```
+
+## Choosing What to Keep: the `how` Parameter
+
+Sometimes a club has no students yet, or a student's club isn't in the advisor list. The `how` parameter decides what happens to these unmatched rows.
+
+| `how=` value      | What it keeps                                  |
+|--------------------|------------------------------------------------|
+| `inner` (default)  | Keep only rows that match in both tables       |
+| `outer`            | Keep every row from both tables; fill gaps with `NaN` |
+| `left`             | Keep every row from the left table              |
+| `right`            | Keep every row from the right table             |
+
+```{python}
+new_club = pd.DataFrame({"club": ["Music"], "advisor": ["Mr. Jay"]})
+advisors_plus = pd.concat([advisors, new_club], ignore_index=True)
+
+pd.merge(students, advisors_plus, how="outer")
+```
+
+## When Column Names Don't Match
+
+If the shared information is stored under different column names, point pandas to each one with `left_on` and `right_on`.
+
+```{python}
+payments = pd.DataFrame({
+    "student_name": ["Amal", "Nadi", "Kavi"],
+    "amount_due":   [500, 300, 450]
+})
+
+pd.merge(students, payments, left_on="name", right_on="student_name")
+```
+
+## Merging on the Index with `.join()`
+
+`.join()` is a shortcut for merging on the index instead of a column — handy once both tables share the same index.
+
+```{python}
+students_idx = students.set_index("name")
+payments_idx = payments.set_index("student_name")
+
+students_idx.join(payments_idx)
+```
+
+> **💡 Tip:** Use `join()` once both DataFrames are indexed the same way (e.g. after `set_index()`). Otherwise, stick with `merge()` and specify the key columns directly.
+
+<hr>
+
+# 2️⃣ Aggregation & GroupBy
+
+## Introduction
+
+::: {.section-intro}
+GroupBy follows a simple three-step idea called **split–apply–combine**: split rows by a category, apply a calculation to each group, and combine the results into one tidy table.
+:::
+
+## Sample Data: Store Sales by Day
+
+```{python}
+sales = pd.DataFrame({
+    "item":     ["Pen", "Pen", "Notebook", "Notebook", "Eraser", "Eraser"],
+    "day":      ["Mon", "Tue", "Mon", "Tue", "Mon", "Tue"],
+    "quantity": [12, 9, 5, 7, 20, 15],
+    "revenue":  [240, 180, 250, 350, 100, 75]
+})
+
+sales
+```
+
+## Total Sales per Item
+
+```{python}
+sales.groupby("item")[["quantity", "revenue"]].sum()
+```
+
+## Multiple Statistics at Once
+
+Pass a list of function names to `.agg()` to see several summaries side by side.
+
+```{python}
+sales.groupby("item")["revenue"].agg(["min", "mean", "max"])
+```
+
+## Filtering Entire Groups
+
+`filter()` keeps or drops whole groups based on a test — for example, only items that brought in more than 300 total revenue.
+
+```{python}
+sales.groupby("item").filter(
+    lambda g: g["revenue"].sum() > 300
+)
+```
+
+## Transform: Same Shape, Adjusted Values
+
+`transform()` returns a result the same size as the original data — useful for things like comparing each day's revenue to its item's average.
+
+```{python}
+sales.groupby("item")["revenue"].transform(
+    lambda x: x - x.mean()
+)
+```
+
+## Apply: Full Flexibility
+
+`apply()` is the most flexible GroupBy operation — it can return anything, including a modified version of each group.
+
+```{python}
+def add_share(group):
+    group["pct_of_item_revenue"] = (
+        group["revenue"] / group["revenue"].sum() * 100
+    )
+    return group
+
+sales.groupby("item").apply(add_share)
+```
+
+## Quick Reference
+
+| Method | What it does |
+|---|---|
+| `count()` | Number of non-missing values |
+| `sum()` / `mean()` | Total or average per group |
+| `min()` / `max()` | Smallest or largest value per group |
+| `std()` / `var()` | Spread within each group |
+| `first()` / `last()` | First or last row in each group |
+| `describe()` | Full summary statistics per group |
+
+<hr>
+
+# 3️⃣ Pivot Tables
+
+## Introduction
+
+::: {.section-intro}
+A pivot table answers questions like "how does X compare across Y and Z?" in one line — combining grouping, aggregating, and reshaping into a single, spreadsheet-style view.
+:::
+
+## Sample Data: Store Survey Results
+
+```{python}
+survey = pd.DataFrame({
+    "grade":     ["Grade 9", "Grade 9", "Grade 10", "Grade 10", "Grade 11", "Grade 11"],
+    "item":      ["Pen", "Notebook", "Pen", "Notebook", "Pen", "Notebook"],
+    "satisfied": [1, 1, 0, 1, 1, 0]
+})
+
+survey
+```
+
+## The GroupBy Approach
+
+```{python}
+survey.groupby(["grade", "item"])["satisfied"].mean().unstack()
+```
+
+## The Pivot Table Approach
+
+The same result, written more concisely. Place `grade` on the rows and `item` across the columns to compare satisfaction at a glance.
+
+```{python}
+survey.pivot_table(
+    values="satisfied",
+    index="grade",
+    columns="item"
+)
+```
+
+## Adding Totals with `margins`
+
+```{python}
+survey.pivot_table(
+    values="satisfied",
+    index="grade",
+    columns="item",
+    margins=True
+)
+```
+
+## Filling in Missing Values
+
+```{python}
+survey.pivot_table(
+    values="satisfied",
+    index="grade",
+    columns="item",
+    fill_value=0
+)
+```
+
+## Grouping by More Than One Variable
+
+```{python}
+survey["term"] = ["Term 1", "Term 1", "Term 2", "Term 2", "Term 1", "Term 2"]
+
+survey.pivot_table(
+    values="satisfied",
+    index=["grade", "term"],
+    columns="item"
+)
+```
+
+> **💡 Tip:** Add `fill_value=0` to replace empty cells with `0` instead of `NaN`, and pass a list to `index=` or `columns=` to group by more than one variable at once.
+
+<hr>
+
+# 4️⃣ Vectorized String Operations
+
+## Introduction
+
+::: {.section-intro}
+The `.str` accessor applies a string method to an entire column at once. It also skips over missing values automatically, so a stray `None` won't crash the whole operation.
+:::
+
+## Sample Data: Messy Customer Names
+
+```{python}
+names = pd.Series(["amal silva", "NADI perera", None, "Kavi RATNAYAKE"])
+
+names.str.title()
+```
+
+## Basic String Methods
+
+```{python}
+names.str.lower()
+```
+
+```{python}
+names.str.upper()
+```
+
+```{python}
+names.str.len()
+```
+
+```{python}
+pd.Series([" Amal ", " Nadi "]).str.strip()
+```
+
+## Searching with `contains()`
+
+Find every entry that includes a pattern — useful for filtering rows by a keyword.
+
+```{python}
+orders = pd.Series(["2 pens, 1 ruler", "3 notebooks", "1 eraser, 2 pens"])
+
+orders.str.contains("pen", case=False)
+```
+
+## Replacing Text
+
+```{python}
+orders.str.replace("pen", "PEN", case=False, regex=False)
+```
+
+## Extracting Parts of Text with Regex
+
+```{python}
+contacts = pd.Series(["Amal-0771234567", "Nadi-0719876543"])
+
+contacts.str.extract(r"(\w+)-(\d+)")
+```
+
+## Splitting Strings
+
+```{python}
+contacts.str.split("-", expand=True)
+```
+
+## One-Hot Encoding with `get_dummies()`
+
+```{python}
+pd.Series(["pens|rulers", "notebooks", "pens|erasers"]).str.get_dummies("|")
+```
+
+## Putting It Together: Tagging Inventory
+
+Combine `contains()` with a list of keywords to flag which products appear in each order — a common first step before grouping or filtering further.
+
+```{python}
+order_text = pd.Series([
+    "pens and rulers",
+    "notebooks only",
+    "pens, erasers, rulers"
+])
+
+items = ["pens", "rulers", "notebooks", "erasers"]
+
+tags = pd.DataFrame({
+    item: order_text.str.contains(item)
+    for item in items
+})
+
+tags
+```
+
+## Finding Orders with Specific Items
+
+```{python}
+mask = tags["pens"] & tags["rulers"]
+
+order_text[mask]
+```
+
+## Quick Reference
+
+| Method | What it does |
+|---|---|
+| `.str.lower()` / `.str.upper()` | Change case of every entry |
+| `.str.strip()` | Remove leading/trailing whitespace |
+| `.str.contains()` | Test for a pattern, returns `True`/`False` |
+| `.str.replace()` | Swap matching text for something else |
+| `.str.extract()` | Pull out parts of text using a pattern |
+| `.str.split()` | Break text into pieces around a separator |
+| `.str.get_dummies()` | Turn tags into one column per category |
+
+<hr>
+
+# 🏆 Key Takeaways
+
+## 🔗 Merge & Join
+
+- Combines tables using a shared column — works just like a SQL join.
+- Supports one-to-one, many-to-one, and many-to-many matches.
+- `how=` (`inner`, `outer`, `left`, `right`) controls which unmatched rows survive.
+- Use `left_on` / `right_on` when the shared column has different names in each table.
+
+## 📊 GroupBy
+
+- Implements the split–apply–combine paradigm.
+- `agg()` runs several statistics at once; `filter()` drops entire groups that fail a test.
+- `transform()` keeps the original shape; `apply()` offers full flexibility.
+
+## 🧩 Pivot Tables
+
+- A faster, more readable alternative to `groupby()` + `unstack()`.
+- `margins=True` adds row/column totals; `fill_value=0` cleans up empty cells.
+- Supports grouping by multiple variables at once.
+
+## ✂️ String Operations
+
+- The `.str` accessor applies text operations across a whole column, skipping missing values.
+- `contains()`, `split()`, and `extract()` turn messy text into structured, analyzable columns.
+- `get_dummies()` converts categorical text tags into indicator columns.
