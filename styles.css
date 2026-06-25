@@ -1,0 +1,274 @@
+/* ===================== PALETTE ===================== */
+:root {
+  --navy: #1F3A5F;
+  --teal: #2E7D7B;
+  --coral: #E8604C;
+  --gold: #E0A526;
+  --violet: #6C5CE7;
+  --pink: #E84393;
+  --mint: #00B894;
+  --bg-soft: #F7F9FC;
+  --code-bg: #0F1B2D;
+  --code-text: #E8EEF7;
+}
+
+/* ===================== BASE ===================== */
+body {
+  background-color: var(--bg-soft);
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.title {
+  background: linear-gradient(90deg, var(--navy), var(--teal) 60%, var(--mint));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800 !important;
+  font-size: 2.6rem !important;
+}
+
+.subtitle {
+  color: var(--coral) !important;
+  font-weight: 600;
+  font-style: normal !important;
+}
+
+.quarto-title-author-name {
+  color: var(--violet);
+  font-weight: 600;
+}
+
+/* ===================== HEADINGS ===================== */
+h1 {
+  color: var(--navy) !important;
+  border-bottom: 4px solid var(--teal);
+  padding-bottom: 0.3rem;
+  margin-top: 3rem !important;
+  font-weight: 800;
+}
+
+/* Color-cycle the numbered top-level sections */
+h1:nth-of-type(4n+1) { border-color: var(--teal); }
+h1:nth-of-type(4n+2) { border-color: var(--coral); }
+h1:nth-of-type(4n+3) { border-color: var(--violet); }
+h1:nth-of-type(4n)   { border-color: var(--gold); }
+
+h2 {
+  color: var(--teal) !important;
+  font-weight: 700;
+  margin-top: 2.2rem !important;
+  padding-left: 0.6rem;
+  border-left: 5px solid var(--coral);
+}
+
+h3 {
+  color: var(--violet) !important;
+  font-weight: 700;
+  margin-top: 1.6rem !important;
+}
+
+h3::before {
+  content: "✦ ";
+  color: var(--gold);
+}
+
+/* ===================== TOC ===================== */
+#TOC {
+  background: linear-gradient(180deg, #FFFFFF, var(--bg-soft));
+  border: 2px solid var(--teal);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.12);
+}
+
+#TOC .toc-title {
+  color: var(--navy);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+#TOC a {
+  color: var(--teal);
+  font-weight: 500;
+  transition: color 0.15s ease, padding-left 0.15s ease;
+}
+
+#TOC a:hover {
+  color: var(--coral);
+  padding-left: 4px;
+  text-decoration: none;
+}
+
+/* ===================== CODE BLOCKS ===================== */
+div.sourceCode, pre.sourceCode {
+  background-color: var(--code-bg) !important;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(15, 27, 45, 0.25);
+}
+
+pre code {
+  color: var(--code-text) !important;
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+}
+
+/* Syntax accents */
+span.st  { color: #7EE787 !important; } /* strings */
+span.dv  { color: #FFA657 !important; } /* numbers */
+span.kw  { color: #FF7B72 !important; } /* keywords */
+span.fu  { color: #79C0FF !important; } /* functions */
+span.co  { color: #8B949E !important; font-style: italic; } /* comments */
+span.op  { color: #E0A526 !important; } /* operators */
+span.bu  { color: #D2A8FF !important; } /* builtins */
+
+.code-fold summary, .code-tools-button {
+  color: var(--teal) !important;
+}
+
+/* Output blocks (cell results) */
+.cell-output, .cell-output-stdout {
+  background-color: #FFFFFF;
+  border: 1px solid #DCE6EE;
+  border-left: 5px solid var(--mint);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* DataFrame tables rendered by pandas */
+.dataframe {
+  border-collapse: collapse !important;
+  width: auto !important;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(31, 58, 95, 0.10);
+}
+
+.dataframe thead th {
+  background: linear-gradient(90deg, var(--navy), var(--teal)) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  padding: 8px 14px !important;
+  border: none !important;
+}
+
+.dataframe tbody tr:nth-child(odd) {
+  background-color: #EAF6F4 !important;
+}
+
+.dataframe tbody tr:nth-child(even) {
+  background-color: #FFFFFF !important;
+}
+
+.dataframe tbody tr:hover {
+  background-color: #FDEFC8 !important;
+  transition: background-color 0.15s ease;
+}
+
+.dataframe td, .dataframe th {
+  padding: 7px 14px !important;
+  border: 1px solid #E3ECF1 !important;
+}
+
+/* ===================== MARKDOWN TABLES ===================== */
+table:not(.dataframe) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.2rem 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(31, 58, 95, 0.10);
+}
+
+table:not(.dataframe) thead {
+  background: linear-gradient(90deg, var(--coral), var(--gold));
+  color: white;
+}
+
+table:not(.dataframe) th {
+  padding: 10px 16px;
+  font-weight: 700;
+  border: none;
+}
+
+table:not(.dataframe) td {
+  padding: 9px 16px;
+  border-bottom: 1px solid #EDEDED;
+}
+
+table:not(.dataframe) tbody tr:nth-child(odd) {
+  background-color: #FFF8EC;
+}
+
+table:not(.dataframe) tbody tr:hover {
+  background-color: #FDEAE6;
+}
+
+/* code spans inside table cells */
+table td code {
+  background-color: var(--navy);
+  color: #FFE9A8;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 0.88em;
+}
+
+/* ===================== BLOCKQUOTES / TIPS ===================== */
+blockquote {
+  background: linear-gradient(135deg, #EAF4F3, #F0F9F6);
+  border-left: 6px solid var(--mint);
+  border-radius: 10px;
+  padding: 0.9rem 1.3rem;
+  margin: 1.4rem 0;
+  box-shadow: 0 3px 10px rgba(0, 184, 148, 0.12);
+}
+
+blockquote p {
+  margin: 0;
+  color: #1B4332;
+}
+
+blockquote strong {
+  color: var(--mint);
+}
+
+/* ===================== INLINE CODE ===================== */
+p code, li code {
+  background-color: #EDE9FE;
+  color: var(--violet);
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+/* ===================== LISTS ===================== */
+ul li::marker {
+  color: var(--coral);
+  font-weight: 700;
+}
+
+/* ===================== HORIZONTAL RULE / DIVIDERS ===================== */
+hr {
+  border: none;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--teal), var(--coral), var(--gold), var(--violet));
+  margin: 2.5rem 0;
+}
+
+/* ===================== STRONG TEXT ===================== */
+strong {
+  color: var(--navy);
+}
+
+/* ===================== CALLOUT-STYLE SECTION INTROS ===================== */
+.section-intro {
+  background: linear-gradient(135deg, #FFFFFF, var(--bg-soft));
+  border: 2px dashed var(--gold);
+  border-radius: 12px;
+  padding: 1rem 1.3rem;
+  font-style: italic;
+  color: #5A4500;
+  margin-bottom: 1.3rem;
+}
