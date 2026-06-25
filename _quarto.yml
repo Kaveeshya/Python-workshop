@@ -1,7 +1,7 @@
 project:
   type: website
 execute:
-  eval: false
+  eval: true
 website:
   title: "Python for Data Science"
   navbar:
