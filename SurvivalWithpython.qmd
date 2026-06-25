@@ -1,0 +1,450 @@
+---
+title: "Survival Analysis with statsmodels"
+author: "Shenan Nathaniel"
+engine: jupyter
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-location: left
+    toc-title: "Contents"
+    toc-depth: 3
+    toc-expand: true
+    number-sections: true
+    code-fold: false
+    code-tools: true
+    code-copy: true
+    highlight-style: github
+    smooth-scroll: true
+    self-contained: true
+    fig-width: 8
+    fig-height: 5
+    df-print: paged
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{python}
+#| label: setup
+#| include: false
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from statsmodels.duration.survfunc import SurvfuncRight
+
+sns.set_theme(style="whitegrid", palette="muted")
+plt.rcParams.update({"figure.dpi": 120, "axes.titlesize": 13})
+```
+
+# Introduction
+
+Survival analysis is one of the most widely used techniques for modelling **time-to-event** data. In Python, **`statsmodels`** provides both non-parametric survival curve estimation and semi-parametric hazard regression, making it a practical alternative to R's dedicated `survival` package.
+
+This document covers:
+
+- What survival analysis is and why censoring matters
+- Estimating survival probabilities (Kaplan--Meier)
+- Comparing survival across groups
+- Proportional Hazards Regression (Cox PH model)
+- Interpreting Hazard Ratios
+- Python vs R for survival analysis
+
+---
+
+# What is Survival Analysis?
+
+## Core Concept
+
+Imagine you have 200 patients who just had heart surgery. You want to know: how long before each patient gets readmitted to hospital? Some patients will be readmitted within weeks. Others will stay healthy for months. And some will never be readmitted at all during your study period. Survival analysis is the statistical toolkit built exactly for this kind of question.
+
+More formally, survival analysis models the **time until an event of interest occurs**. The event could be death, hospital readmission, equipment failure, or customer churn. Unlike ordinary regression, the outcome is a **duration**, and not every subject's event is observed by the end of the study.
+
+The central object of interest is the **survival function**:
+
+$$
+S(t) = P(T > t)
+$$
+
+This is simply the probability that the event has not yet occurred by time $t$. In our example, $S(30)$ is the probability a patient has not been readmitted by day 30. Its complement, the **hazard function** $h(t)$, gives the instantaneous risk of the event occurring at time $t$, given that the subject has survived up to that point:
+
+$$
+h(t) = \lim_{\Delta t \to 0} \frac{P(t \le T < t + \Delta t \mid T \ge t)}{\Delta t}
+$$
+
+## Types of Survival Analysis
+
+| Type | Use Case | Example |
+|---|---|---|
+| **Kaplan--Meier** | Non-parametric estimate of $S(t)$, no covariates | Overall readmission curve |
+| **Log-rank test** | Compare survival between two or more groups | Rehab vs No Rehab patients |
+| **Cox PH Regression** | Semi-parametric hazard regression with covariates | `days ~ age_group + rehab` |
+| **Parametric models** | Fully specified distribution (Weibull, exponential) | Simulating survival times |
+| **Competing risks** | Multiple distinct event types | Readmission vs Death vs Full Recovery |
+
+## Censoring -- The Key Concept
+
+For survival estimates to be valid, censoring must be handled correctly rather than discarded:
+
+1. **Right-censoring** -- the event had not occurred when observation ended (most common case; covered in this document).
+2. **Left-censoring** -- the event occurred before observation began, and the exact time is unknown.
+3. **Interval-censoring** -- the event is known to have occurred within a time window, but not the exact moment.
+
+A patient who reaches day 365 without being readmitted still tells us something important: they survived **at least** 365 days. Discarding that row, as you might in ordinary regression, would bias every estimate toward shorter survival times.
+
+## What Survival Analysis Can and Cannot Do
+
+::: {.callout-important}
+## The Proportional Hazards Assumption
+The Cox model assumes the **hazard ratio between any two individuals is constant over time**. If the rehab program is twice as protective in month one as it is in month six, this assumption is violated and the model's coefficients can be misleading. This is checkable via Schoenfeld residuals, which are noted in the Next Steps section.
+:::
+
+Survival analysis **can**:
+
+- Use partial information from censored subjects rather than discarding it
+- Estimate the probability of survival past any time point
+- Quantify how covariates shift hazard up or down, holding other variables fixed
+- Compare survival curves across groups visually and formally via the log-rank test
+
+Survival analysis **cannot**:
+
+- Tell you *why* the hazard differs between groups, only that it does
+- Handle informative censoring without bias (censoring must be unrelated to the event mechanism)
+- Extrapolate the survival curve meaningfully beyond the observed time range
+
+---
+
+# Python vs R for Survival Analysis
+
+Both ecosystems support survival analysis well, but the maturity gap is wider here than in ordinary regression.
+
+::: {.panel-tabset}
+
+## Kaplan--Meier
+
+| Criterion | Python (`statsmodels`) | R (`survival`) |
+|---|---|---|
+| Survival curve estimation | `SurvfuncRight`, manual plotting required | `survfit()` with built-in `plot()` method |
+| Confidence bands | Computed from `surv_prob_se` (pointwise) | Automatic, simultaneous or pointwise |
+| Risk tables | Not built-in, manual with `matplotlib` | `survminer::ggsurvplot()` adds them automatically |
+
+**Python**
+```python
+from statsmodels.duration.survfunc import SurvfuncRight
+sf = SurvfuncRight(df["time"], df["event"])
+ax.step(sf.surv_times, sf.surv_prob, where="post")
+```
+
+**R**
+```r
+library(survival)
+library(survminer)
+fit <- survfit(Surv(time, event) ~ 1, data = df)
+ggsurvplot(fit, data = df, conf.int = TRUE, risk.table = TRUE)
+```
+
+## Cox PH Regression
+
+| Criterion | Python (`statsmodels`) | R (`survival`) |
+|---|---|---|
+| Model fitting | `smf.phreg(formula, data, status=)` | `coxph(Surv(time, event) ~ ., data = df)` |
+| Time-varying covariates | Limited support | Well supported via `tt()` argument |
+| Frailty / random effects | Not supported | `coxme` package |
+| Schoenfeld residuals | Not built-in | `cox.zph()` |
+
+**Python**
+```python
+model = smf.phreg(
+    "days_until_readmission ~ C(age_group) + C(rehab)",
+    data=df, status=df["readmitted"]
+).fit()
+```
+
+**R**
+```r
+model <- coxph(
+  Surv(days_until_readmission, readmitted) ~ age_group + rehab,
+  data = df
+)
+summary(model)
+```
+
+## Log-rank Test
+
+| Criterion | Python | R (`survival`) |
+|---|---|---|
+| Built-in test | Not in `statsmodels`; requires `lifelines` (`pip install lifelines`) | `survdiff()` |
+
+**Python**
+```python
+from lifelines.statistics import logrank_test
+result = logrank_test(t1, t2, event_observed_A=e1, event_observed_B=e2)
+print(result.p_value)
+```
+
+**R**
+```r
+survdiff(Surv(time, event) ~ group, data = df)
+```
+
+## Model Comparison / AIC
+
+| Criterion | Python (`statsmodels`) | R (`survival`) |
+|---|---|---|
+| AIC | Not exposed directly; compute as $-2\ell + 2k$ | `AIC(model)` works directly on `coxph` objects |
+
+**Python**
+```python
+aic = -2 * model.llf + 2 * len(model.params)
+```
+
+**R**
+```r
+AIC(model)
+```
+
+:::
+
+::: {.callout-tip}
+## When to Use Which
+Choose **Python** when survival analysis is one step within a larger machine learning or data engineering pipeline, especially if you plan to extend toward random survival forests or deep learning hazard models. Choose **R** when the analysis is the primary statistical deliverable, such as in clinical trials or biostatistics, where mature diagnostics and polished plots matter more than pipeline integration.
+:::
+
+---
+
+# Data
+
+## The Scenario
+
+We have a dataset of **200 patients** who were discharged after heart surgery. For each patient we track how many days pass before they are readmitted to hospital. If a patient reaches the end of the one-year study window without being readmitted, they are **right-censored**: we know they survived at least that long, but we do not know what happens after the study ends.
+
+Two variables might affect how quickly a patient is readmitted:
+
+- **Age group**: whether the patient is under 60 or 60 and over. Older patients tend to recover more slowly and are expected to face a higher readmission risk.
+- **Rehab**: whether the patient completed a post-surgery rehabilitation programme. Rehab is expected to be protective, reducing the daily risk of readmission.
+
+```{python}
+#| label: load-data
+
+np.random.seed(42)
+n_patients = 200
+
+age_group     = np.random.choice(["Under 60", "60 and Over"], size=n_patients, p=[0.5, 0.5])
+rehab         = np.random.choice(["Yes", "No"], size=n_patients, p=[0.55, 0.45])
+
+age_numeric   = (age_group == "60 and Over").astype(float)
+rehab_numeric = (rehab == "No").astype(float)
+
+# Being older or skipping rehab both reduce expected survival time
+# Scale parameter controls how long patients survive on average
+linear_predictor = -0.5 * age_numeric - 0.6 * rehab_numeric
+scale_param      = np.exp(linear_predictor) * 500
+shape_param      = 1.5   # hazard increases over time, realistic for post-surgery recovery
+
+# Survival times from Weibull distribution, equivalent to R's rweibull(n, shape, scale)
+# Times must depend on covariates or the Cox model has no signal to detect
+true_event_time = np.random.weibull(shape_param, size=n_patients) * scale_param
+
+# 365-day study window: patients not readmitted by day 365 are right-censored
+study_window  = 365
+observed_time = np.minimum(true_event_time, study_window).round(1)
+readmitted    = (true_event_time <= study_window).astype(int)
+
+patients = pd.DataFrame({
+    "days_until_readmission": observed_time,
+    "readmitted":             readmitted,
+    "age_group":              age_group,
+    "rehab":                  rehab
+})
+
+patients.head()
+```
+
+```{python}
+#| label: summary-stats
+
+patients["readmitted"].map({0: "Censored (Not Readmitted)", 1: "Readmitted"}).value_counts()
+```
+
+---
+
+# Non-Parametric Estimation {#sec-km}
+
+## The Kaplan--Meier Survival Curve
+
+The **Kaplan--Meier estimator** calculates the probability of *surviving* (avoiding readmission) past a given time $t$. It is entirely non-parametric and makes no assumptions about the shape of the survival distribution.
+
+$$
+\hat{S}(t) = \prod_{t_i \leq t} \left(1 - \frac{d_i}{n_i}\right)
+$$
+
+where $d_i$ is the number of readmissions and $n_i$ is the number of patients still at risk at time $t_i$.
+
+We use `SurvfuncRight` from `statsmodels`, which takes the **time column first** and the **event status column second**, and automatically accounts for censored observations.
+
+```{python}
+#| label: km-curve
+#| fig-cap: "Overall Kaplan-Meier Survival Curve"
+
+sf = SurvfuncRight(patients["days_until_readmission"], patients["readmitted"])
+
+fig, ax = plt.subplots()
+
+ax.step(sf.surv_times, sf.surv_prob, where="post",
+        color="#4C72B0", linewidth=2, label="Survival estimate")
+
+se = sf.surv_prob_se
+lower = np.maximum(sf.surv_prob - 1.96 * se, 0)
+upper = np.minimum(sf.surv_prob + 1.96 * se, 1)
+ax.fill_between(sf.surv_times, lower, upper,
+                step="post", alpha=0.15, color="#4C72B0", label="95% CI (pointwise)")
+
+ax.set_xlabel("Days since Discharge")
+ax.set_ylabel("Probability of Not Being Readmitted")
+ax.set_title("Kaplan--Meier Survival Curve for Post-Surgery Patients")
+ax.set_ylim(0, 1.05)
+ax.legend()
+plt.tight_layout()
+plt.show()
+```
+
+::: {.callout-tip}
+We plot manually with `ax.step()` rather than the built-in `sf.plot()`. The built-in method draws confidence bands as separate line objects, which makes correct colouring difficult once multiple groups are overlaid, which is relevant in the next section.
+:::
+
+## Stratified Survival Curves
+
+Does completing the rehabilitation programme affect how long patients stay out of hospital? We fit a separate Kaplan--Meier curve for each group and overlay them.
+
+```{python}
+#| label: km-stratified
+#| fig-cap: "Survival Curves by Rehab Completion"
+
+fig, ax = plt.subplots()
+colors = {"Yes": "#4C72B0", "No": "#DD4444"}
+
+for group in ["Yes", "No"]:
+    subset   = patients[patients["rehab"] == group]
+    sf_group = SurvfuncRight(subset["days_until_readmission"], subset["readmitted"])
+    ax.step(sf_group.surv_times, sf_group.surv_prob,
+            where="post", color=colors[group], linewidth=2, label=f"Rehab: {group}")
+
+ax.set_xlabel("Days since Discharge")
+ax.set_ylabel("Survival Probability")
+ax.set_title("Kaplan--Meier Survival Curve by Rehab Completion")
+ax.legend(title="Completed Rehab")
+ax.set_ylim(0, 1.05)
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+# Proportional Hazards Regression {#sec-cox}
+
+## Model Specification
+
+Kaplan--Meier is excellent for visualisation, but it cannot handle continuous predictors or control for multiple variables simultaneously. For that we use the **Cox Proportional Hazards model**, which models the hazard rate $h(t)$, the instantaneous risk of readmission at time $t$ given survival up to that point.
+
+$$
+h(t \mid X) = h_0(t) \exp(\beta_1 X_1 + \beta_2 X_2)
+$$
+
+$h_0(t)$ is the **baseline hazard**, left completely unspecified. This is what makes Cox **semi-parametric**. The covariates shift that baseline multiplicatively through the exponential.
+
+```{python}
+#| label: cox-model
+
+model_ph = smf.phreg(
+    formula="days_until_readmission ~ C(age_group) + C(rehab)",
+    data=patients,
+    status=patients["readmitted"]
+).fit()
+
+print(model_ph.summary())
+```
+
+## Interpreting Hazard Ratios
+
+Just as logistic regression uses **Odds Ratios**, survival analysis uses **Hazard Ratios (HR)**, obtained by exponentiating the raw coefficients.
+
+```{python}
+#| label: hazard-ratios
+
+ci_cox = model_ph.conf_int()
+
+hazard_ratios = pd.DataFrame({
+    "Hazard Ratio (HR)": np.exp(model_ph.params),
+    "2.5%":              np.exp(ci_cox[:, 0]),
+    "97.5%":             np.exp(ci_cox[:, 1]),
+    "p-value":           model_ph.pvalues
+}).round(3)
+
+hazard_ratios
+```
+
+| Term | Interpretation |
+|---|---|
+| **HR > 1** | Increases the hazard, readmission happens sooner |
+| **HR < 1** | Decreases the hazard, protective effect |
+| `C(age_group)[T.Under 60]` | Compares Under 60 to 60 and Over (the reference). HR < 1 means younger patients face lower readmission risk |
+| `C(rehab)[T.Yes]` | Compares Rehab Yes to No (the reference). HR < 1 means rehab patients face lower readmission risk |
+
+::: {.callout-important}
+If the 95% confidence interval crosses **1.0**, the effect is not statistically significant. This is equivalent to a coefficient's confidence interval crossing **0** in ordinary regression.
+:::
+
+---
+
+# Model Comparison
+
+What if we only model `age_group` and leave out rehab?
+
+```{python}
+#| label: model-compare
+
+model_ph_simple = smf.phreg(
+    formula="days_until_readmission ~ C(age_group)",
+    data=patients,
+    status=patients["readmitted"]
+).fit()
+
+comparison_tbl = pd.DataFrame({
+    "Model": ["Simple (Age Group Only)", "Full (Age Group + Rehab)"],
+    "Log-Likelihood": [round(model_ph_simple.llf, 2), round(model_ph.llf, 2)],
+    "Num. Parameters": [len(model_ph_simple.params), len(model_ph.params)],
+    "AIC": [
+        round(-2 * model_ph_simple.llf + 2 * len(model_ph_simple.params), 2),
+        round(-2 * model_ph.llf        + 2 * len(model_ph.params),        2)
+    ]
+})
+
+comparison_tbl
+```
+
+> The model with the **lower AIC** is preferred. It achieves better fit without unnecessary complexity. Because the Cox model uses a partial rather than full likelihood, `statsmodels` does not expose `.aic` directly. It must be calculated manually as $-2\ell + 2k$, unlike R's `AIC()`.
+
+---
+
+# Summary
+
+| Concept | Key Takeaway |
+|---|---|
+| **Censoring** | Right-censored observations retain partial information and are never discarded |
+| **Kaplan--Meier** | Non-parametric survival curve estimation with no distributional assumptions |
+| **`SurvfuncRight`** | statsmodels' KM implementation; pass time column first then status column |
+| **`smf.phreg()`** | Cox PH model via the R-style formula interface; `status=` replaces `Surv()` |
+| **Hazard Ratios** | `np.exp(model.params)`, HR less than 1 is protective, HR greater than 1 increases risk |
+| **Python vs R** | R's `survival` package remains more mature for diagnostics and plotting; Python wins for ML pipeline integration |
+
+::: {.callout-tip}
+## Next Steps
+- **Checking the PH Assumption:** the Cox model assumes the hazard ratio between groups is constant over time, checkable via Schoenfeld residuals.
+- **Competing Risks:** if patients can have multiple distinct outcomes such as readmission, death, or full recovery, use Cumulative Incidence Functions instead of standard Kaplan--Meier.
+- **Parametric Models:** assuming a specific distribution such as Weibull for survival times yields fully parametric shape and scale estimates rather than the semi-parametric Cox approach.
+:::
