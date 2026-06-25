@@ -8,7 +8,7 @@
 
 <meta name="author" content="S.A.M.Perera - AS2022296">
 
-<title>Data Manipulation with Pandas – Python for Data Science</title>
+<title>🐼 Data Manipulation with Pandas – Python for Data Science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -62,7 +62,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -75,10 +75,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-9de9f6925d305bcf5b7eb9351f368d06.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a06d91ce84fd25668039cca5222332b2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-83bfd26eddafaac0c61e49bb7762fb11.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -106,10 +106,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="styles (1).css">
 <link rel="stylesheet" href="stylesnew10.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar docked nav-fixed quarto-light">
@@ -260,12 +265,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Data Visualization using Matplotlib</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./matplotlib-part3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Seaborn for Statistical Data Visualization</span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -307,90 +306,58 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#combining-datasets-merge-join" id="toc-combining-datasets-merge-join" class="nav-link" data-scroll-target="#combining-datasets-merge-join">03 Combining Datasets: Merge &amp; Join</a>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">🧭 Introduction</a></li>
+  <li><a href="#combining-tables-merge-join" id="toc-combining-tables-merge-join" class="nav-link" data-scroll-target="#combining-tables-merge-join">1️⃣ Combining Tables: Merge &amp; Join</a>
   <ul class="collapse">
   <li><a href="#introduction-1" id="toc-introduction-1" class="nav-link" data-scroll-target="#introduction-1">Introduction</a></li>
-  <li><a href="#three-categories-of-joins" id="toc-three-categories-of-joins" class="nav-link" data-scroll-target="#three-categories-of-joins">Three Categories of Joins</a>
-  <ul class="collapse">
-  <li><a href="#one-to-one-joins" id="toc-one-to-one-joins" class="nav-link" data-scroll-target="#one-to-one-joins">One-to-One Joins</a></li>
-  <li><a href="#many-to-one-joins" id="toc-many-to-one-joins" class="nav-link" data-scroll-target="#many-to-one-joins">Many-to-One Joins</a></li>
-  <li><a href="#many-to-many-joins" id="toc-many-to-many-joins" class="nav-link" data-scroll-target="#many-to-many-joins">Many-to-Many Joins</a></li>
+  <li><a href="#a-one-to-one-match" id="toc-a-one-to-one-match" class="nav-link" data-scroll-target="#a-one-to-one-match">A One-to-One Match</a></li>
+  <li><a href="#a-many-to-one-match" id="toc-a-many-to-one-match" class="nav-link" data-scroll-target="#a-many-to-one-match">A Many-to-One Match</a></li>
+  <li><a href="#a-many-to-many-match" id="toc-a-many-to-many-match" class="nav-link" data-scroll-target="#a-many-to-many-match">A Many-to-Many Match</a></li>
+  <li><a href="#choosing-what-to-keep-the-how-parameter" id="toc-choosing-what-to-keep-the-how-parameter" class="nav-link" data-scroll-target="#choosing-what-to-keep-the-how-parameter">Choosing What to Keep: the <code>how</code> Parameter</a></li>
+  <li><a href="#when-column-names-dont-match" id="toc-when-column-names-dont-match" class="nav-link" data-scroll-target="#when-column-names-dont-match">When Column Names Don’t Match</a></li>
+  <li><a href="#merging-on-the-index-with-.join" id="toc-merging-on-the-index-with-.join" class="nav-link" data-scroll-target="#merging-on-the-index-with-.join">Merging on the Index with <code>.join()</code></a></li>
   </ul></li>
-  <li><a href="#specifying-the-merge-key" id="toc-specifying-the-merge-key" class="nav-link" data-scroll-target="#specifying-the-merge-key">Specifying the Merge Key</a>
-  <ul class="collapse">
-  <li><a href="#using-the-same-column-name" id="toc-using-the-same-column-name" class="nav-link" data-scroll-target="#using-the-same-column-name">Using the Same Column Name</a></li>
-  <li><a href="#using-different-column-names" id="toc-using-different-column-names" class="nav-link" data-scroll-target="#using-different-column-names">Using Different Column Names</a></li>
-  <li><a href="#merging-on-index" id="toc-merging-on-index" class="nav-link" data-scroll-target="#merging-on-index">Merging on Index</a></li>
-  <li><a href="#using-.join" id="toc-using-.join" class="nav-link" data-scroll-target="#using-.join">Using <code>.join()</code></a></li>
-  </ul></li>
-  <li><a href="#set-arithmetic-and-the-how-parameter" id="toc-set-arithmetic-and-the-how-parameter" class="nav-link" data-scroll-target="#set-arithmetic-and-the-how-parameter">Set Arithmetic and the <code>how</code> Parameter</a>
-  <ul class="collapse">
-  <li><a href="#inner-join" id="toc-inner-join" class="nav-link" data-scroll-target="#inner-join">Inner Join</a></li>
-  <li><a href="#outer-join" id="toc-outer-join" class="nav-link" data-scroll-target="#outer-join">Outer Join</a></li>
-  <li><a href="#left-join" id="toc-left-join" class="nav-link" data-scroll-target="#left-join">Left Join</a></li>
-  <li><a href="#right-join" id="toc-right-join" class="nav-link" data-scroll-target="#right-join">Right Join</a></li>
-  </ul></li>
-  </ul></li>
-  <li><a href="#aggregation-groupby" id="toc-aggregation-groupby" class="nav-link" data-scroll-target="#aggregation-groupby">04 Aggregation &amp; GroupBy</a>
+  <li><a href="#aggregation-groupby" id="toc-aggregation-groupby" class="nav-link" data-scroll-target="#aggregation-groupby">2️⃣ Aggregation &amp; GroupBy</a>
   <ul class="collapse">
   <li><a href="#introduction-2" id="toc-introduction-2" class="nav-link" data-scroll-target="#introduction-2">Introduction</a></li>
-  <li><a href="#sample-dataset" id="toc-sample-dataset" class="nav-link" data-scroll-target="#sample-dataset">Sample Dataset</a></li>
-  <li><a href="#splitapplycombine" id="toc-splitapplycombine" class="nav-link" data-scroll-target="#splitapplycombine">Split–Apply–Combine</a></li>
-  <li><a href="#aggregation-functions" id="toc-aggregation-functions" class="nav-link" data-scroll-target="#aggregation-functions">Aggregation Functions</a>
-  <ul class="collapse">
-  <li><a href="#mean" id="toc-mean" class="nav-link" data-scroll-target="#mean">Mean</a></li>
-  <li><a href="#median" id="toc-median" class="nav-link" data-scroll-target="#median">Median</a></li>
-  <li><a href="#multiple-aggregations" id="toc-multiple-aggregations" class="nav-link" data-scroll-target="#multiple-aggregations">Multiple Aggregations</a></li>
+  <li><a href="#sample-data-store-sales-by-day" id="toc-sample-data-store-sales-by-day" class="nav-link" data-scroll-target="#sample-data-store-sales-by-day">Sample Data: Store Sales by Day</a></li>
+  <li><a href="#total-sales-per-item" id="toc-total-sales-per-item" class="nav-link" data-scroll-target="#total-sales-per-item">Total Sales per Item</a></li>
+  <li><a href="#multiple-statistics-at-once" id="toc-multiple-statistics-at-once" class="nav-link" data-scroll-target="#multiple-statistics-at-once">Multiple Statistics at Once</a></li>
+  <li><a href="#filtering-entire-groups" id="toc-filtering-entire-groups" class="nav-link" data-scroll-target="#filtering-entire-groups">Filtering Entire Groups</a></li>
+  <li><a href="#transform-same-shape-adjusted-values" id="toc-transform-same-shape-adjusted-values" class="nav-link" data-scroll-target="#transform-same-shape-adjusted-values">Transform: Same Shape, Adjusted Values</a></li>
+  <li><a href="#apply-full-flexibility" id="toc-apply-full-flexibility" class="nav-link" data-scroll-target="#apply-full-flexibility">Apply: Full Flexibility</a></li>
+  <li><a href="#quick-reference" id="toc-quick-reference" class="nav-link" data-scroll-target="#quick-reference">Quick Reference</a></li>
   </ul></li>
-  <li><a href="#filtering-groups" id="toc-filtering-groups" class="nav-link" data-scroll-target="#filtering-groups">Filtering Groups</a></li>
-  <li><a href="#transform" id="toc-transform" class="nav-link" data-scroll-target="#transform">Transform</a></li>
-  <li><a href="#apply" id="toc-apply" class="nav-link" data-scroll-target="#apply">Apply</a></li>
-  <li><a href="#common-aggregation-methods" id="toc-common-aggregation-methods" class="nav-link" data-scroll-target="#common-aggregation-methods">Common Aggregation Methods</a></li>
-  </ul></li>
-  <li><a href="#pivot-tables" id="toc-pivot-tables" class="nav-link" data-scroll-target="#pivot-tables">05 Pivot Tables</a>
+  <li><a href="#pivot-tables" id="toc-pivot-tables" class="nav-link" data-scroll-target="#pivot-tables">3️⃣ Pivot Tables</a>
   <ul class="collapse">
   <li><a href="#introduction-3" id="toc-introduction-3" class="nav-link" data-scroll-target="#introduction-3">Introduction</a></li>
-  <li><a href="#sample-dataset-1" id="toc-sample-dataset-1" class="nav-link" data-scroll-target="#sample-dataset-1">Sample Dataset</a></li>
-  <li><a href="#groupby-approach" id="toc-groupby-approach" class="nav-link" data-scroll-target="#groupby-approach">GroupBy Approach</a></li>
-  <li><a href="#pivot-table-approach" id="toc-pivot-table-approach" class="nav-link" data-scroll-target="#pivot-table-approach">Pivot Table Approach</a></li>
-  <li><a href="#margins" id="toc-margins" class="nav-link" data-scroll-target="#margins">Margins</a></li>
-  <li><a href="#fill-missing-values" id="toc-fill-missing-values" class="nav-link" data-scroll-target="#fill-missing-values">Fill Missing Values</a></li>
-  <li><a href="#multiple-grouping-variables" id="toc-multiple-grouping-variables" class="nav-link" data-scroll-target="#multiple-grouping-variables">Multiple Grouping Variables</a></li>
+  <li><a href="#sample-data-store-survey-results" id="toc-sample-data-store-survey-results" class="nav-link" data-scroll-target="#sample-data-store-survey-results">Sample Data: Store Survey Results</a></li>
+  <li><a href="#the-groupby-approach" id="toc-the-groupby-approach" class="nav-link" data-scroll-target="#the-groupby-approach">The GroupBy Approach</a></li>
+  <li><a href="#the-pivot-table-approach" id="toc-the-pivot-table-approach" class="nav-link" data-scroll-target="#the-pivot-table-approach">The Pivot Table Approach</a></li>
+  <li><a href="#adding-totals-with-margins" id="toc-adding-totals-with-margins" class="nav-link" data-scroll-target="#adding-totals-with-margins">Adding Totals with <code>margins</code></a></li>
+  <li><a href="#filling-in-missing-values" id="toc-filling-in-missing-values" class="nav-link" data-scroll-target="#filling-in-missing-values">Filling in Missing Values</a></li>
+  <li><a href="#grouping-by-more-than-one-variable" id="toc-grouping-by-more-than-one-variable" class="nav-link" data-scroll-target="#grouping-by-more-than-one-variable">Grouping by More Than One Variable</a></li>
   </ul></li>
-  <li><a href="#vectorized-string-operations" id="toc-vectorized-string-operations" class="nav-link" data-scroll-target="#vectorized-string-operations">06 Vectorized String Operations</a>
+  <li><a href="#vectorized-string-operations" id="toc-vectorized-string-operations" class="nav-link" data-scroll-target="#vectorized-string-operations">4️⃣ Vectorized String Operations</a>
   <ul class="collapse">
   <li><a href="#introduction-4" id="toc-introduction-4" class="nav-link" data-scroll-target="#introduction-4">Introduction</a></li>
-  <li><a href="#sample-data" id="toc-sample-data" class="nav-link" data-scroll-target="#sample-data">Sample Data</a></li>
-  <li><a href="#basic-string-methods" id="toc-basic-string-methods" class="nav-link" data-scroll-target="#basic-string-methods">Basic String Methods</a>
-  <ul class="collapse">
-  <li><a href="#capitalize" id="toc-capitalize" class="nav-link" data-scroll-target="#capitalize">Capitalize</a></li>
-  <li><a href="#lowercase" id="toc-lowercase" class="nav-link" data-scroll-target="#lowercase">Lowercase</a></li>
-  <li><a href="#uppercase" id="toc-uppercase" class="nav-link" data-scroll-target="#uppercase">Uppercase</a></li>
-  <li><a href="#title-case" id="toc-title-case" class="nav-link" data-scroll-target="#title-case">Title Case</a></li>
-  <li><a href="#length" id="toc-length" class="nav-link" data-scroll-target="#length">Length</a></li>
-  <li><a href="#remove-whitespace" id="toc-remove-whitespace" class="nav-link" data-scroll-target="#remove-whitespace">Remove Whitespace</a></li>
-  </ul></li>
-  <li><a href="#regular-expressions" id="toc-regular-expressions" class="nav-link" data-scroll-target="#regular-expressions">Regular Expressions</a>
-  <ul class="collapse">
-  <li><a href="#contains" id="toc-contains" class="nav-link" data-scroll-target="#contains">Contains</a></li>
-  <li><a href="#replace" id="toc-replace" class="nav-link" data-scroll-target="#replace">Replace</a></li>
-  <li><a href="#extract" id="toc-extract" class="nav-link" data-scroll-target="#extract">Extract</a></li>
-  </ul></li>
+  <li><a href="#sample-data-messy-customer-names" id="toc-sample-data-messy-customer-names" class="nav-link" data-scroll-target="#sample-data-messy-customer-names">Sample Data: Messy Customer Names</a></li>
+  <li><a href="#basic-string-methods" id="toc-basic-string-methods" class="nav-link" data-scroll-target="#basic-string-methods">Basic String Methods</a></li>
+  <li><a href="#searching-with-contains" id="toc-searching-with-contains" class="nav-link" data-scroll-target="#searching-with-contains">Searching with <code>contains()</code></a></li>
+  <li><a href="#replacing-text" id="toc-replacing-text" class="nav-link" data-scroll-target="#replacing-text">Replacing Text</a></li>
+  <li><a href="#extracting-parts-of-text-with-regex" id="toc-extracting-parts-of-text-with-regex" class="nav-link" data-scroll-target="#extracting-parts-of-text-with-regex">Extracting Parts of Text with Regex</a></li>
   <li><a href="#splitting-strings" id="toc-splitting-strings" class="nav-link" data-scroll-target="#splitting-strings">Splitting Strings</a></li>
   <li><a href="#one-hot-encoding-with-get_dummies" id="toc-one-hot-encoding-with-get_dummies" class="nav-link" data-scroll-target="#one-hot-encoding-with-get_dummies">One-Hot Encoding with <code>get_dummies()</code></a></li>
+  <li><a href="#putting-it-together-tagging-inventory" id="toc-putting-it-together-tagging-inventory" class="nav-link" data-scroll-target="#putting-it-together-tagging-inventory">Putting It Together: Tagging Inventory</a></li>
+  <li><a href="#finding-orders-with-specific-items" id="toc-finding-orders-with-specific-items" class="nav-link" data-scroll-target="#finding-orders-with-specific-items">Finding Orders with Specific Items</a></li>
+  <li><a href="#quick-reference-1" id="toc-quick-reference-1" class="nav-link" data-scroll-target="#quick-reference-1">Quick Reference</a></li>
   </ul></li>
-  <li><a href="#recipe-database-example" id="toc-recipe-database-example" class="nav-link" data-scroll-target="#recipe-database-example">Recipe Database Example</a>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">🏆 Key Takeaways</a>
   <ul class="collapse">
-  <li><a href="#creating-ingredient-indicators" id="toc-creating-ingredient-indicators" class="nav-link" data-scroll-target="#creating-ingredient-indicators">Creating Ingredient Indicators</a></li>
-  <li><a href="#finding-recipes-with-specific-ingredients" id="toc-finding-recipes-with-specific-ingredients" class="nav-link" data-scroll-target="#finding-recipes-with-specific-ingredients">Finding Recipes with Specific Ingredients</a></li>
-  </ul></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a>
-  <ul class="collapse">
-  <li><a href="#merge-join" id="toc-merge-join" class="nav-link" data-scroll-target="#merge-join">Merge &amp; Join</a></li>
-  <li><a href="#groupby" id="toc-groupby" class="nav-link" data-scroll-target="#groupby">GroupBy</a></li>
-  <li><a href="#pivot-tables-1" id="toc-pivot-tables-1" class="nav-link" data-scroll-target="#pivot-tables-1">Pivot Tables</a></li>
-  <li><a href="#string-operations" id="toc-string-operations" class="nav-link" data-scroll-target="#string-operations">String Operations</a></li>
+  <li><a href="#merge-join" id="toc-merge-join" class="nav-link" data-scroll-target="#merge-join">🔗 Merge &amp; Join</a></li>
+  <li><a href="#groupby" id="toc-groupby" class="nav-link" data-scroll-target="#groupby">📊 GroupBy</a></li>
+  <li><a href="#pivot-tables-1" id="toc-pivot-tables-1" class="nav-link" data-scroll-target="#pivot-tables-1">🧩 Pivot Tables</a></li>
+  <li><a href="#string-operations" id="toc-string-operations" class="nav-link" data-scroll-target="#string-operations">✂️ String Operations</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -400,8 +367,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Pandas_final.html">🐼 Data Manipulation</a></li><li class="breadcrumb-item"><a href="./pandas_teaching.html">Data Manipulation with Pandas</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Data Manipulation with Pandas</h1>
-<p class="subtitle lead">Merge &amp; Join, GroupBy, Pivot Tables, and String Operations</p>
+<h1 class="title">🐼 Data Manipulation with Pandas</h1>
+<p class="subtitle lead">Merging Tables, GroupBy, Pivot Tables, and String Operations</p>
 </div>
 
 
@@ -425,707 +392,1584 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <section id="introduction" class="level1">
-<h1>Introduction</h1>
-<p>This chapter introduces advanced data manipulation techniques in Pandas. These techniques allow us to combine datasets, summarize grouped data, create multidimensional summaries, and efficiently process textual information.</p>
+<h1>🧭 Introduction</h1>
+<div class="section-intro">
+<p>Real datasets are rarely one tidy table. They’re split across files, grouped in odd ways, and full of messy text. This guide walks through four everyday pandas tools that fix exactly that, using one simple, running example: <strong>a small school store</strong>.</p>
+</div>
 <p>The main topics covered are:</p>
 <ul>
-<li>Merge &amp; Join</li>
-<li>Aggregation &amp; GroupBy</li>
-<li>Pivot Tables</li>
-<li>Vectorized String Operations</li>
+<li>🔗 <strong>Merge &amp; Join</strong> — stitch separate tables together</li>
+<li>📊 <strong>GroupBy</strong> — summarize rows by category</li>
+<li>🧩 <strong>Pivot Tables</strong> — turn long data into a readable grid</li>
+<li>✂️ <strong>Vectorized String Operations</strong> — clean and search text columns</li>
 </ul>
-<div id="065d5124" class="cell" data-execution_count="1">
+<div id="9ffc258b" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<hr>
 </section>
-<section id="combining-datasets-merge-join" class="level1">
-<h1>03 Combining Datasets: Merge &amp; Join</h1>
+<section id="combining-tables-merge-join" class="level1">
+<h1>1️⃣ Combining Tables: Merge &amp; Join</h1>
 <section id="introduction-1" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-1">Introduction</h2>
-<p>Data are often stored across multiple tables. To perform meaningful analyses, we frequently need to combine these tables based on common variables. Pandas provides powerful relational operations through <code>merge()</code> and <code>join()</code>.</p>
-<p>The merge operation is conceptually similar to SQL joins.</p>
+<div class="section-intro">
+<p>Imagine a school store. One table lists students and the club they belong to. A second table lists each club’s faculty advisor. They share a column — <code>club</code> — and <code>pd.merge()</code> uses it to line the rows up correctly, the same way a SQL <code>JOIN</code> would.</p>
+</div>
 </section>
-<section id="three-categories-of-joins" class="level2">
-<h2 class="anchored" data-anchor-id="three-categories-of-joins">Three Categories of Joins</h2>
-<section id="one-to-one-joins" class="level3">
-<h3 class="anchored" data-anchor-id="one-to-one-joins">One-to-One Joins</h3>
-<p>A one-to-one join occurs when each key value appears exactly once in both tables.</p>
-<div id="05660344" class="cell" data-execution_count="2">
+<section id="a-one-to-one-match" class="level2">
+<h2 class="anchored" data-anchor-id="a-one-to-one-match">A One-to-One Match</h2>
+<p>Every student appears once, and every club appears once. This is the simplest case.</p>
+<div id="14ace401" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"employee"</span>: [<span class="st">"Bob"</span>, <span class="st">"Jake"</span>, <span class="st">"Lisa"</span>, <span class="st">"Sue"</span>],</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"group"</span>: [<span class="st">"Accounting"</span>, <span class="st">"Engineering"</span>, <span class="st">"Engineering"</span>, <span class="st">"HR"</span>]</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>students <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"name"</span>: [<span class="st">"Amal"</span>, <span class="st">"Nadi"</span>, <span class="st">"Kavi"</span>, <span class="st">"Roshi"</span>],</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"club"</span>: [<span class="st">"Chess"</span>, <span class="st">"Art"</span>, <span class="st">"Drama"</span>, <span class="st">"Robotics"</span>]</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"employee"</span>: [<span class="st">"Lisa"</span>, <span class="st">"Bob"</span>, <span class="st">"Jake"</span>, <span class="st">"Sue"</span>],</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"hire_date"</span>: [<span class="dv">2004</span>, <span class="dv">2008</span>, <span class="dv">2012</span>, <span class="dv">2014</span>]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>advisors <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"club"</span>:    [<span class="st">"Chess"</span>, <span class="st">"Art"</span>, <span class="st">"Drama"</span>, <span class="st">"Robotics"</span>],</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"advisor"</span>: [<span class="st">"Mr. Silva"</span>, <span class="st">"Ms. Perera"</span>, <span class="st">"Mr. Fonseka"</span>, <span class="st">"Ms. Bandara"</span>]</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>pd.merge(df1, df2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>pd.merge(students, advisors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-</div>
-</section>
-<section id="many-to-one-joins" class="level3">
-<h3 class="anchored" data-anchor-id="many-to-one-joins">Many-to-One Joins</h3>
-<p>A many-to-one join occurs when multiple observations in one table correspond to a single observation in another table.</p>
-<div id="a004a4e1" class="cell" data-execution_count="3">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df3 <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"group"</span>: [<span class="st">"Accounting"</span>, <span class="st">"Engineering"</span>, <span class="st">"HR"</span>],</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"supervisor"</span>: [<span class="st">"Carly"</span>, <span class="st">"Guido"</span>, <span class="st">"Steve"</span>]</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>pd.merge(df1, df3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="many-to-many-joins" class="level3">
-<h3 class="anchored" data-anchor-id="many-to-many-joins">Many-to-Many Joins</h3>
-<p>A many-to-many join occurs when duplicate keys exist in both tables.</p>
-<div id="d46ab656" class="cell" data-execution_count="4">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df4 <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"group"</span>: [<span class="st">"Accounting"</span>, <span class="st">"Accounting"</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Engineering"</span>, <span class="st">"Engineering"</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>              <span class="st">"HR"</span>, <span class="st">"HR"</span>],</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"skills"</span>: [<span class="st">"math"</span>, <span class="st">"spreadsheets"</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>               <span class="st">"coding"</span>, <span class="st">"linux"</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>               <span class="st">"communication"</span>, <span class="st">"recruiting"</span>]</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>pd.merge(df1, df4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-</section>
-<section id="specifying-the-merge-key" class="level2">
-<h2 class="anchored" data-anchor-id="specifying-the-merge-key">Specifying the Merge Key</h2>
-<section id="using-the-same-column-name" class="level3">
-<h3 class="anchored" data-anchor-id="using-the-same-column-name">Using the Same Column Name</h3>
-<p>When both DataFrames contain a common column name, the key can be specified using the <code>on</code> parameter.</p>
-<div id="5b789d95" class="cell" data-execution_count="5">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pd.merge(df1, df2, on<span class="op">=</span><span class="st">"employee"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="using-different-column-names" class="level3">
-<h3 class="anchored" data-anchor-id="using-different-column-names">Using Different Column Names</h3>
-<div id="a76763b8" class="cell" data-execution_count="6">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df5 <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"name"</span>: [<span class="st">"Bob"</span>, <span class="st">"Jake"</span>, <span class="st">"Lisa"</span>, <span class="st">"Sue"</span>],</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"salary"</span>: [<span class="dv">50000</span>, <span class="dv">70000</span>, <span class="dv">80000</span>, <span class="dv">60000</span>]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>pd.merge(</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    df1,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    df5,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span><span class="st">"employee"</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span><span class="st">"name"</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="merging-on-index" class="level3">
-<h3 class="anchored" data-anchor-id="merging-on-index">Merging on Index</h3>
-<div id="527ab01f" class="cell" data-execution_count="7">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df1a <span class="op">=</span> df1.set_index(<span class="st">"employee"</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df2a <span class="op">=</span> df2.set_index(<span class="st">"employee"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pd.merge(</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    df1a,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    df2a,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    left_index<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    right_index<span class="op">=</span><span class="va">True</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="using-.join" class="level3">
-<h3 class="anchored" data-anchor-id="using-.join">Using <code>.join()</code></h3>
-<p>The <code>.join()</code> method is a convenient shortcut for index-based merges.</p>
-<div id="e920e674" class="cell" data-execution_count="8">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df1a.join(df2a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-</section>
-<section id="set-arithmetic-and-the-how-parameter" class="level2">
-<h2 class="anchored" data-anchor-id="set-arithmetic-and-the-how-parameter">Set Arithmetic and the <code>how</code> Parameter</h2>
-<p>The <code>how</code> parameter controls which keys appear in the merged result.</p>
-<section id="inner-join" class="level3">
-<h3 class="anchored" data-anchor-id="inner-join">Inner Join</h3>
-<p>Keeps only keys that appear in both tables.</p>
-<div id="15cd9488" class="cell" data-execution_count="9">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pd.merge(df1, df2, how<span class="op">=</span><span class="st">"inner"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="outer-join" class="level3">
-<h3 class="anchored" data-anchor-id="outer-join">Outer Join</h3>
-<p>Keeps all keys from both tables.</p>
-<div id="b4e8ef04" class="cell" data-execution_count="10">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pd.merge(df1, df2, how<span class="op">=</span><span class="st">"outer"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="left-join" class="level3">
-<h3 class="anchored" data-anchor-id="left-join">Left Join</h3>
-<p>Keeps all keys from the left table.</p>
-<div id="c6cf2f99" class="cell" data-execution_count="11">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pd.merge(df1, df2, how<span class="op">=</span><span class="st">"left"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="right-join" class="level3">
-<h3 class="anchored" data-anchor-id="right-join">Right Join</h3>
-<p>Keeps all keys from the right table.</p>
-<div id="3022f8d5" class="cell" data-execution_count="12">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>pd.merge(df1, df2, how<span class="op">=</span><span class="st">"right"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-</section>
-</section>
-<section id="aggregation-groupby" class="level1">
-<h1>04 Aggregation &amp; GroupBy</h1>
-<section id="introduction-2" class="level2">
-<h2 class="anchored" data-anchor-id="introduction-2">Introduction</h2>
-<p>GroupBy is one of the most important tools in data analysis. It allows us to divide observations into groups and calculate summary statistics for each group.</p>
-<p>The GroupBy operation follows the Split–Apply–Combine paradigm.</p>
-<ol type="1">
-<li>Split the data into groups.</li>
-<li>Apply a function to each group.</li>
-<li>Combine the results.</li>
-</ol>
-</section>
-<section id="sample-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="sample-dataset">Sample Dataset</h2>
-<div id="b2dd788e" class="cell" data-execution_count="13">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"key"</span>: [<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>],</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data1"</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>],</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data2"</span>: [<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>]</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="splitapplycombine" class="level2">
-<h2 class="anchored" data-anchor-id="splitapplycombine">Split–Apply–Combine</h2>
-<div id="314b08de" class="cell" data-execution_count="14">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"key"</span>).<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="aggregation-functions" class="level2">
-<h2 class="anchored" data-anchor-id="aggregation-functions">Aggregation Functions</h2>
-<p>Aggregation reduces each group to one or more summary values.</p>
-<section id="mean" class="level3">
-<h3 class="anchored" data-anchor-id="mean">Mean</h3>
-<div id="e292b358" class="cell" data-execution_count="15">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"key"</span>).mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="median" class="level3">
-<h3 class="anchored" data-anchor-id="median">Median</h3>
-<div id="10d43401" class="cell" data-execution_count="16">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"key"</span>).median()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="multiple-aggregations" class="level3">
-<h3 class="anchored" data-anchor-id="multiple-aggregations">Multiple Aggregations</h3>
-<div id="c92180cd" class="cell" data-execution_count="17">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"key"</span>).aggregate(</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"min"</span>, np.median, <span class="bu">max</span>]</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-</section>
-<section id="filtering-groups" class="level2">
-<h2 class="anchored" data-anchor-id="filtering-groups">Filtering Groups</h2>
-<p>Filtering removes groups that fail a specified condition.</p>
-<div id="34ae2fd1" class="cell" data-execution_count="18">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> filter_func(x):</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x[<span class="st">"data2"</span>].std() <span class="op">&gt;</span> <span class="dv">1</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"key"</span>).<span class="bu">filter</span>(filter_func)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="transform" class="level2">
-<h2 class="anchored" data-anchor-id="transform">Transform</h2>
-<p>Transform returns a result having the same shape as the original dataset.</p>
-<div id="e55ed6a0" class="cell" data-execution_count="19">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"key"</span>).transform(</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> x: x <span class="op">-</span> x.mean()</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="apply" class="level2">
-<h2 class="anchored" data-anchor-id="apply">Apply</h2>
-<p>Apply is the most flexible GroupBy operation.</p>
-<div id="94d56f07" class="cell" data-execution_count="20">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalize(group):</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    group[<span class="st">"data1"</span>] <span class="op">=</span> group[<span class="st">"data1"</span>] <span class="op">/</span> group[<span class="st">"data1"</span>].<span class="bu">sum</span>()</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> group</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"key"</span>).<span class="bu">apply</span>(normalize)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-</section>
-<section id="common-aggregation-methods" class="level2">
-<h2 class="anchored" data-anchor-id="common-aggregation-methods">Common Aggregation Methods</h2>
-<table class="caption-top table">
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
-<th>Method</th>
-<th>Description</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">club</th>
+<th data-quarto-table-cell-role="th">advisor</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>count()</td>
-<td>Count non-missing values</td>
+<th data-quarto-table-cell-role="th">0</th>
+<td>Amal</td>
+<td>Chess</td>
+<td>Mr. Silva</td>
 </tr>
 <tr class="even">
-<td>sum()</td>
-<td>Sum of values</td>
+<th data-quarto-table-cell-role="th">1</th>
+<td>Nadi</td>
+<td>Art</td>
+<td>Ms. Perera</td>
 </tr>
 <tr class="odd">
-<td>mean()</td>
-<td>Arithmetic mean</td>
+<th data-quarto-table-cell-role="th">2</th>
+<td>Kavi</td>
+<td>Drama</td>
+<td>Mr. Fonseka</td>
 </tr>
 <tr class="even">
-<td>median()</td>
-<td>Median</td>
-</tr>
-<tr class="odd">
-<td>min()</td>
-<td>Minimum value</td>
-</tr>
-<tr class="even">
-<td>max()</td>
-<td>Maximum value</td>
-</tr>
-<tr class="odd">
-<td>std()</td>
-<td>Standard deviation</td>
-</tr>
-<tr class="even">
-<td>var()</td>
-<td>Variance</td>
-</tr>
-<tr class="odd">
-<td>first()</td>
-<td>First observation</td>
-</tr>
-<tr class="even">
-<td>last()</td>
-<td>Last observation</td>
-</tr>
-<tr class="odd">
-<td>describe()</td>
-<td>Summary statistics</td>
+<th data-quarto-table-cell-role="th">3</th>
+<td>Roshi</td>
+<td>Robotics</td>
+<td>Ms. Bandara</td>
 </tr>
 </tbody>
 </table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="a-many-to-one-match" class="level2">
+<h2 class="anchored" data-anchor-id="a-many-to-one-match">A Many-to-One Match</h2>
+<p>Now suppose several students share the same club. pandas repeats the matching advisor for every student in that club — nothing is lost, nothing is duplicated incorrectly.</p>
+<div id="7d0a483a" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>students2 <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"name"</span>: [<span class="st">"Amal"</span>, <span class="st">"Sajith"</span>, <span class="st">"Nadi"</span>, <span class="st">"Roshi"</span>],</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"club"</span>: [<span class="st">"Chess"</span>, <span class="st">"Chess"</span>, <span class="st">"Art"</span>, <span class="st">"Art"</span>]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>pd.merge(students2, advisors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">club</th>
+<th data-quarto-table-cell-role="th">advisor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Amal</td>
+<td>Chess</td>
+<td>Mr. Silva</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Sajith</td>
+<td>Chess</td>
+<td>Mr. Silva</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Nadi</td>
+<td>Art</td>
+<td>Ms. Perera</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>Roshi</td>
+<td>Art</td>
+<td>Ms. Perera</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="a-many-to-many-match" class="level2">
+<h2 class="anchored" data-anchor-id="a-many-to-many-match">A Many-to-Many Match</h2>
+<p>If a club can have several advisors <em>and</em> several students share that club, every student gets matched with every advisor for that club.</p>
+<div id="eaa27f12" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>co_advisors <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"club"</span>: [<span class="st">"Chess"</span>, <span class="st">"Chess"</span>, <span class="st">"Art"</span>, <span class="st">"Drama"</span>],</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"advisor"</span>: [<span class="st">"Mr. Silva"</span>, <span class="st">"Mrs. Costa"</span>, <span class="st">"Ms. Perera"</span>, <span class="st">"Mr. Fonseka"</span>]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>pd.merge(students2, co_advisors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">club</th>
+<th data-quarto-table-cell-role="th">advisor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Amal</td>
+<td>Chess</td>
+<td>Mr. Silva</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Amal</td>
+<td>Chess</td>
+<td>Mrs. Costa</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Sajith</td>
+<td>Chess</td>
+<td>Mr. Silva</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>Sajith</td>
+<td>Chess</td>
+<td>Mrs. Costa</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>Nadi</td>
+<td>Art</td>
+<td>Ms. Perera</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>Roshi</td>
+<td>Art</td>
+<td>Ms. Perera</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="choosing-what-to-keep-the-how-parameter" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-what-to-keep-the-how-parameter">Choosing What to Keep: the <code>how</code> Parameter</h2>
+<p>Sometimes a club has no students yet, or a student’s club isn’t in the advisor list. The <code>how</code> parameter decides what happens to these unmatched rows.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 70%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><code>how=</code> value</th>
+<th>What it keeps</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>inner</code> (default)</td>
+<td>Keep only rows that match in both tables</td>
+</tr>
+<tr class="even">
+<td><code>outer</code></td>
+<td>Keep every row from both tables; fill gaps with <code>NaN</code></td>
+</tr>
+<tr class="odd">
+<td><code>left</code></td>
+<td>Keep every row from the left table</td>
+</tr>
+<tr class="even">
+<td><code>right</code></td>
+<td>Keep every row from the right table</td>
+</tr>
+</tbody>
+</table>
+<div id="e038b665" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>new_club <span class="op">=</span> pd.DataFrame({<span class="st">"club"</span>: [<span class="st">"Music"</span>], <span class="st">"advisor"</span>: [<span class="st">"Mr. Jay"</span>]})</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>advisors_plus <span class="op">=</span> pd.concat([advisors, new_club], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>pd.merge(students, advisors_plus, how<span class="op">=</span><span class="st">"outer"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">club</th>
+<th data-quarto-table-cell-role="th">advisor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Nadi</td>
+<td>Art</td>
+<td>Ms. Perera</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Amal</td>
+<td>Chess</td>
+<td>Mr. Silva</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Kavi</td>
+<td>Drama</td>
+<td>Mr. Fonseka</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>NaN</td>
+<td>Music</td>
+<td>Mr. Jay</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>Roshi</td>
+<td>Robotics</td>
+<td>Ms. Bandara</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="when-column-names-dont-match" class="level2">
+<h2 class="anchored" data-anchor-id="when-column-names-dont-match">When Column Names Don’t Match</h2>
+<p>If the shared information is stored under different column names, point pandas to each one with <code>left_on</code> and <code>right_on</code>.</p>
+<div id="87eaad3b" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>payments <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"student_name"</span>: [<span class="st">"Amal"</span>, <span class="st">"Nadi"</span>, <span class="st">"Kavi"</span>],</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"amount_due"</span>:   [<span class="dv">500</span>, <span class="dv">300</span>, <span class="dv">450</span>]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>pd.merge(students, payments, left_on<span class="op">=</span><span class="st">"name"</span>, right_on<span class="op">=</span><span class="st">"student_name"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">club</th>
+<th data-quarto-table-cell-role="th">student_name</th>
+<th data-quarto-table-cell-role="th">amount_due</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Amal</td>
+<td>Chess</td>
+<td>Amal</td>
+<td>500</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Nadi</td>
+<td>Art</td>
+<td>Nadi</td>
+<td>300</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Kavi</td>
+<td>Drama</td>
+<td>Kavi</td>
+<td>450</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="merging-on-the-index-with-.join" class="level2">
+<h2 class="anchored" data-anchor-id="merging-on-the-index-with-.join">Merging on the Index with <code>.join()</code></h2>
+<p><code>.join()</code> is a shortcut for merging on the index instead of a column — handy once both tables share the same index.</p>
+<div id="60a07adb" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>students_idx <span class="op">=</span> students.set_index(<span class="st">"name"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>payments_idx <span class="op">=</span> payments.set_index(<span class="st">"student_name"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>students_idx.join(payments_idx)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">club</th>
+<th data-quarto-table-cell-role="th">amount_due</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Amal</th>
+<td>Chess</td>
+<td>500.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Nadi</th>
+<td>Art</td>
+<td>300.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Kavi</th>
+<td>Drama</td>
+<td>450.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Roshi</th>
+<td>Robotics</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>💡 Tip:</strong> Use <code>join()</code> once both DataFrames are indexed the same way (e.g.&nbsp;after <code>set_index()</code>). Otherwise, stick with <code>merge()</code> and specify the key columns directly.</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="aggregation-groupby" class="level1">
+<h1>2️⃣ Aggregation &amp; GroupBy</h1>
+<section id="introduction-2" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-2">Introduction</h2>
+<div class="section-intro">
+<p>GroupBy follows a simple three-step idea called <strong>split–apply–combine</strong>: split rows by a category, apply a calculation to each group, and combine the results into one tidy table.</p>
+</div>
+</section>
+<section id="sample-data-store-sales-by-day" class="level2">
+<h2 class="anchored" data-anchor-id="sample-data-store-sales-by-day">Sample Data: Store Sales by Day</h2>
+<div id="2335f58e" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sales <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"item"</span>:     [<span class="st">"Pen"</span>, <span class="st">"Pen"</span>, <span class="st">"Notebook"</span>, <span class="st">"Notebook"</span>, <span class="st">"Eraser"</span>, <span class="st">"Eraser"</span>],</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"day"</span>:      [<span class="st">"Mon"</span>, <span class="st">"Tue"</span>, <span class="st">"Mon"</span>, <span class="st">"Tue"</span>, <span class="st">"Mon"</span>, <span class="st">"Tue"</span>],</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: [<span class="dv">12</span>, <span class="dv">9</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">20</span>, <span class="dv">15</span>],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"revenue"</span>:  [<span class="dv">240</span>, <span class="dv">180</span>, <span class="dv">250</span>, <span class="dv">350</span>, <span class="dv">100</span>, <span class="dv">75</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>sales</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th">day</th>
+<th data-quarto-table-cell-role="th">quantity</th>
+<th data-quarto-table-cell-role="th">revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Pen</td>
+<td>Mon</td>
+<td>12</td>
+<td>240</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Pen</td>
+<td>Tue</td>
+<td>9</td>
+<td>180</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Notebook</td>
+<td>Mon</td>
+<td>5</td>
+<td>250</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>Notebook</td>
+<td>Tue</td>
+<td>7</td>
+<td>350</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>Eraser</td>
+<td>Mon</td>
+<td>20</td>
+<td>100</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>Eraser</td>
+<td>Tue</td>
+<td>15</td>
+<td>75</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="total-sales-per-item" class="level2">
+<h2 class="anchored" data-anchor-id="total-sales-per-item">Total Sales per Item</h2>
+<div id="c0373835" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sales.groupby(<span class="st">"item"</span>)[[<span class="st">"quantity"</span>, <span class="st">"revenue"</span>]].<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">quantity</th>
+<th data-quarto-table-cell-role="th">revenue</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Eraser</th>
+<td>35</td>
+<td>175</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Notebook</th>
+<td>12</td>
+<td>600</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Pen</th>
+<td>21</td>
+<td>420</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="multiple-statistics-at-once" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-statistics-at-once">Multiple Statistics at Once</h2>
+<p>Pass a list of function names to <code>.agg()</code> to see several summaries side by side.</p>
+<div id="a5213855" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sales.groupby(<span class="st">"item"</span>)[<span class="st">"revenue"</span>].agg([<span class="st">"min"</span>, <span class="st">"mean"</span>, <span class="st">"max"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">min</th>
+<th data-quarto-table-cell-role="th">mean</th>
+<th data-quarto-table-cell-role="th">max</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Eraser</th>
+<td>75</td>
+<td>87.5</td>
+<td>100</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Notebook</th>
+<td>250</td>
+<td>300.0</td>
+<td>350</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Pen</th>
+<td>180</td>
+<td>210.0</td>
+<td>240</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="filtering-entire-groups" class="level2">
+<h2 class="anchored" data-anchor-id="filtering-entire-groups">Filtering Entire Groups</h2>
+<p><code>filter()</code> keeps or drops whole groups based on a test — for example, only items that brought in more than 300 total revenue.</p>
+<div id="60ff49ac" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sales.groupby(<span class="st">"item"</span>).<span class="bu">filter</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> g: g[<span class="st">"revenue"</span>].<span class="bu">sum</span>() <span class="op">&gt;</span> <span class="dv">300</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th">day</th>
+<th data-quarto-table-cell-role="th">quantity</th>
+<th data-quarto-table-cell-role="th">revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Pen</td>
+<td>Mon</td>
+<td>12</td>
+<td>240</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Pen</td>
+<td>Tue</td>
+<td>9</td>
+<td>180</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Notebook</td>
+<td>Mon</td>
+<td>5</td>
+<td>250</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>Notebook</td>
+<td>Tue</td>
+<td>7</td>
+<td>350</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="transform-same-shape-adjusted-values" class="level2">
+<h2 class="anchored" data-anchor-id="transform-same-shape-adjusted-values">Transform: Same Shape, Adjusted Values</h2>
+<p><code>transform()</code> returns a result the same size as the original data — useful for things like comparing each day’s revenue to its item’s average.</p>
+<div id="9cded3d6" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sales.groupby(<span class="st">"item"</span>)[<span class="st">"revenue"</span>].transform(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> x: x <span class="op">-</span> x.mean()</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>0    30.0
+1   -30.0
+2   -50.0
+3    50.0
+4    12.5
+5   -12.5
+Name: revenue, dtype: float64</code></pre>
+</div>
+</div>
+</section>
+<section id="apply-full-flexibility" class="level2">
+<h2 class="anchored" data-anchor-id="apply-full-flexibility">Apply: Full Flexibility</h2>
+<p><code>apply()</code> is the most flexible GroupBy operation — it can return anything, including a modified version of each group.</p>
+<div id="5737f0bb" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_share(group):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    group[<span class="st">"pct_of_item_revenue"</span>] <span class="op">=</span> (</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        group[<span class="st">"revenue"</span>] <span class="op">/</span> group[<span class="st">"revenue"</span>].<span class="bu">sum</span>() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> group</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>sales.groupby(<span class="st">"item"</span>).<span class="bu">apply</span>(add_share)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">day</th>
+<th data-quarto-table-cell-role="th">quantity</th>
+<th data-quarto-table-cell-role="th">revenue</th>
+<th data-quarto-table-cell-role="th">pct_of_item_revenue</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th rowspan="2" data-quarto-table-cell-role="th" data-valign="top">Eraser</th>
+<th data-quarto-table-cell-role="th">4</th>
+<td>Mon</td>
+<td>20</td>
+<td>100</td>
+<td>57.142857</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>Tue</td>
+<td>15</td>
+<td>75</td>
+<td>42.857143</td>
+</tr>
+<tr class="odd">
+<th rowspan="2" data-quarto-table-cell-role="th" data-valign="top">Notebook</th>
+<th data-quarto-table-cell-role="th">2</th>
+<td>Mon</td>
+<td>5</td>
+<td>250</td>
+<td>41.666667</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>Tue</td>
+<td>7</td>
+<td>350</td>
+<td>58.333333</td>
+</tr>
+<tr class="odd">
+<th rowspan="2" data-quarto-table-cell-role="th" data-valign="top">Pen</th>
+<th data-quarto-table-cell-role="th">0</th>
+<td>Mon</td>
+<td>12</td>
+<td>240</td>
+<td>57.142857</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Tue</td>
+<td>9</td>
+<td>180</td>
+<td>42.857143</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="quick-reference" class="level2">
+<h2 class="anchored" data-anchor-id="quick-reference">Quick Reference</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>count()</code></td>
+<td>Number of non-missing values</td>
+</tr>
+<tr class="even">
+<td><code>sum()</code> / <code>mean()</code></td>
+<td>Total or average per group</td>
+</tr>
+<tr class="odd">
+<td><code>min()</code> / <code>max()</code></td>
+<td>Smallest or largest value per group</td>
+</tr>
+<tr class="even">
+<td><code>std()</code> / <code>var()</code></td>
+<td>Spread within each group</td>
+</tr>
+<tr class="odd">
+<td><code>first()</code> / <code>last()</code></td>
+<td>First or last row in each group</td>
+</tr>
+<tr class="even">
+<td><code>describe()</code></td>
+<td>Full summary statistics per group</td>
+</tr>
+</tbody>
+</table>
+<hr>
 </section>
 </section>
 <section id="pivot-tables" class="level1">
-<h1>05 Pivot Tables</h1>
+<h1>3️⃣ Pivot Tables</h1>
 <section id="introduction-3" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-3">Introduction</h2>
-<p>Pivot tables provide an efficient way to summarize multidimensional data.</p>
-<p>A pivot table combines grouping, aggregation, and reshaping into a single operation.</p>
-</section>
-<section id="sample-dataset-1" class="level2">
-<h2 class="anchored" data-anchor-id="sample-dataset-1">Sample Dataset</h2>
-<div id="d1700370" class="cell" data-execution_count="21">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>titanic <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sex"</span>: [<span class="st">"male"</span>,<span class="st">"female"</span>,<span class="st">"female"</span>,<span class="st">"male"</span>,<span class="st">"female"</span>,<span class="st">"male"</span>],</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"class"</span>: [<span class="st">"First"</span>,<span class="st">"First"</span>,<span class="st">"Third"</span>,<span class="st">"Third"</span>,<span class="st">"Second"</span>,<span class="st">"Second"</span>],</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"survived"</span>: [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>]</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>titanic</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="section-intro">
+<p>A pivot table answers questions like “how does X compare across Y and Z?” in one line — combining grouping, aggregating, and reshaping into a single, spreadsheet-style view.</p>
 </div>
 </section>
-<section id="groupby-approach" class="level2">
-<h2 class="anchored" data-anchor-id="groupby-approach">GroupBy Approach</h2>
-<p>The following analysis computes survival rates by sex and passenger class.</p>
-<div id="e095e1e7" class="cell" data-execution_count="22">
+<section id="sample-data-store-survey-results" class="level2">
+<h2 class="anchored" data-anchor-id="sample-data-store-survey-results">Sample Data: Store Survey Results</h2>
+<div id="2edca97a" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>titanic.groupby(</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"sex"</span>, <span class="st">"class"</span>]</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>)[<span class="st">"survived"</span>].mean().unstack()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>survey <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"grade"</span>:     [<span class="st">"Grade 9"</span>, <span class="st">"Grade 9"</span>, <span class="st">"Grade 10"</span>, <span class="st">"Grade 10"</span>, <span class="st">"Grade 11"</span>, <span class="st">"Grade 11"</span>],</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"item"</span>:      [<span class="st">"Pen"</span>, <span class="st">"Notebook"</span>, <span class="st">"Pen"</span>, <span class="st">"Notebook"</span>, <span class="st">"Pen"</span>, <span class="st">"Notebook"</span>],</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"satisfied"</span>: [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>survey</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">grade</th>
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th">satisfied</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Grade 9</td>
+<td>Pen</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Grade 9</td>
+<td>Notebook</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Grade 10</td>
+<td>Pen</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>Grade 10</td>
+<td>Notebook</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>Grade 11</td>
+<td>Pen</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>Grade 11</td>
+<td>Notebook</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
 </div>
 </section>
-<section id="pivot-table-approach" class="level2">
-<h2 class="anchored" data-anchor-id="pivot-table-approach">Pivot Table Approach</h2>
-<p>The same result can be obtained more concisely using a pivot table.</p>
-<div id="4ef8e2e3" class="cell" data-execution_count="23">
+<section id="the-groupby-approach" class="level2">
+<h2 class="anchored" data-anchor-id="the-groupby-approach">The GroupBy Approach</h2>
+<div id="fb97f984" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>titanic.pivot_table(</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">"survived"</span>,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"sex"</span>,</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">"class"</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>survey.groupby([<span class="st">"grade"</span>, <span class="st">"item"</span>])[<span class="st">"satisfied"</span>].mean().unstack()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th">Notebook</th>
+<th data-quarto-table-cell-role="th">Pen</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">grade</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Grade 10</th>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Grade 11</th>
+<td>0.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Grade 9</th>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
 </div>
 </section>
-<section id="margins" class="level2">
-<h2 class="anchored" data-anchor-id="margins">Margins</h2>
-<p>The <code>margins=True</code> argument adds overall row and column totals.</p>
-<div id="3c74ac32" class="cell" data-execution_count="24">
+<section id="the-pivot-table-approach" class="level2">
+<h2 class="anchored" data-anchor-id="the-pivot-table-approach">The Pivot Table Approach</h2>
+<p>The same result, written more concisely. Place <code>grade</code> on the rows and <code>item</code> across the columns to compare satisfaction at a glance.</p>
+<div id="ad12f134" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>titanic.pivot_table(</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">"survived"</span>,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"sex"</span>,</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">"class"</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    margins<span class="op">=</span><span class="va">True</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>survey.pivot_table(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">"satisfied"</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"grade"</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">"item"</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th">Notebook</th>
+<th data-quarto-table-cell-role="th">Pen</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">grade</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Grade 10</th>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Grade 11</th>
+<td>0.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Grade 9</th>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
 </div>
 </section>
-<section id="fill-missing-values" class="level2">
-<h2 class="anchored" data-anchor-id="fill-missing-values">Fill Missing Values</h2>
-<p>Missing cells can be replaced using <code>fill_value</code>.</p>
-<div id="40d9a13c" class="cell" data-execution_count="25">
+<section id="adding-totals-with-margins" class="level2">
+<h2 class="anchored" data-anchor-id="adding-totals-with-margins">Adding Totals with <code>margins</code></h2>
+<div id="0d119402" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>titanic.pivot_table(</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">"survived"</span>,</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"sex"</span>,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">"class"</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    fill_value<span class="op">=</span><span class="dv">0</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>survey.pivot_table(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">"satisfied"</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"grade"</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">"item"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    margins<span class="op">=</span><span class="va">True</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th">Notebook</th>
+<th data-quarto-table-cell-role="th">Pen</th>
+<th data-quarto-table-cell-role="th">All</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">grade</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Grade 10</th>
+<td>1.000000</td>
+<td>0.000000</td>
+<td>0.500000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Grade 11</th>
+<td>0.000000</td>
+<td>1.000000</td>
+<td>0.500000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Grade 9</th>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">All</th>
+<td>0.666667</td>
+<td>0.666667</td>
+<td>0.666667</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
 </div>
 </section>
-<section id="multiple-grouping-variables" class="level2">
-<h2 class="anchored" data-anchor-id="multiple-grouping-variables">Multiple Grouping Variables</h2>
-<div id="dd0c42a8" class="cell" data-execution_count="26">
+<section id="filling-in-missing-values" class="level2">
+<h2 class="anchored" data-anchor-id="filling-in-missing-values">Filling in Missing Values</h2>
+<div id="9f749b03" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>titanic[<span class="st">"age_group"</span>] <span class="op">=</span> [</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Adult"</span>,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Adult"</span>,</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Child"</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Adult"</span>,</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Child"</span>,</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Adult"</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>titanic.pivot_table(</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">"survived"</span>,</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>[<span class="st">"sex"</span>, <span class="st">"age_group"</span>],</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">"class"</span></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>survey.pivot_table(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">"satisfied"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"grade"</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">"item"</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    fill_value<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th">Notebook</th>
+<th data-quarto-table-cell-role="th">Pen</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">grade</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Grade 10</th>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Grade 11</th>
+<td>0.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Grade 9</th>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
 </div>
+</div>
+</div>
+</section>
+<section id="grouping-by-more-than-one-variable" class="level2">
+<h2 class="anchored" data-anchor-id="grouping-by-more-than-one-variable">Grouping by More Than One Variable</h2>
+<div id="7299be49" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>survey[<span class="st">"term"</span>] <span class="op">=</span> [<span class="st">"Term 1"</span>, <span class="st">"Term 1"</span>, <span class="st">"Term 2"</span>, <span class="st">"Term 2"</span>, <span class="st">"Term 1"</span>, <span class="st">"Term 2"</span>]</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>survey.pivot_table(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    values<span class="op">=</span><span class="st">"satisfied"</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>[<span class="st">"grade"</span>, <span class="st">"term"</span>],</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span><span class="st">"item"</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">item</th>
+<th data-quarto-table-cell-role="th">Notebook</th>
+<th data-quarto-table-cell-role="th">Pen</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">grade</th>
+<th data-quarto-table-cell-role="th">term</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Grade 10</th>
+<th data-quarto-table-cell-role="th">Term 2</th>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th rowspan="2" data-quarto-table-cell-role="th" data-valign="top">Grade 11</th>
+<th data-quarto-table-cell-role="th">Term 1</th>
+<td>NaN</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Term 2</th>
+<td>0.0</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Grade 9</th>
+<th data-quarto-table-cell-role="th">Term 1</th>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>💡 Tip:</strong> Add <code>fill_value=0</code> to replace empty cells with <code>0</code> instead of <code>NaN</code>, and pass a list to <code>index=</code> or <code>columns=</code> to group by more than one variable at once.</p>
+</blockquote>
+<hr>
 </section>
 </section>
 <section id="vectorized-string-operations" class="level1">
-<h1>06 Vectorized String Operations</h1>
+<h1>4️⃣ Vectorized String Operations</h1>
 <section id="introduction-4" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-4">Introduction</h2>
-<p>Text data frequently appear in real-world datasets. Pandas provides the <code>.str</code> accessor to perform vectorized string operations efficiently.</p>
-<p>Advantages include:</p>
-<ul>
-<li>Handles missing values automatically.</li>
-<li>Faster than explicit loops.</li>
-<li>Supports regular expressions.</li>
-<li>Produces cleaner and more readable code.</li>
-</ul>
+<div class="section-intro">
+<p>The <code>.str</code> accessor applies a string method to an entire column at once. It also skips over missing values automatically, so a stray <code>None</code> won’t crash the whole operation.</p>
+</div>
 </section>
-<section id="sample-data" class="level2">
-<h2 class="anchored" data-anchor-id="sample-data">Sample Data</h2>
-<div id="8f9da0a3" class="cell" data-execution_count="27">
+<section id="sample-data-messy-customer-names" class="level2">
+<h2 class="anchored" data-anchor-id="sample-data-messy-customer-names">Sample Data: Messy Customer Names</h2>
+<div id="eb4837b4" class="cell" data-execution_count="20">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [<span class="st">"peter"</span>, <span class="st">"Paul"</span>, <span class="va">None</span>, <span class="st">"MARY"</span>]</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> pd.Series(data)</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>names</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> pd.Series([<span class="st">"amal silva"</span>, <span class="st">"NADI perera"</span>, <span class="va">None</span>, <span class="st">"Kavi RATNAYAKE"</span>])</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.title()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>0        Amal Silva
+1       Nadi Perera
+2               NaN
+3    Kavi Ratnayake
+dtype: str</code></pre>
+</div>
 </div>
 </section>
 <section id="basic-string-methods" class="level2">
 <h2 class="anchored" data-anchor-id="basic-string-methods">Basic String Methods</h2>
-<section id="capitalize" class="level3">
-<h3 class="anchored" data-anchor-id="capitalize">Capitalize</h3>
-<div id="3f0a0ec5" class="cell" data-execution_count="28">
+<div id="9bcacd07" class="cell" data-execution_count="21">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.capitalize()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.lower()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>0        amal silva
+1       nadi perera
+2               NaN
+3    kavi ratnayake
+dtype: str</code></pre>
 </div>
-</section>
-<section id="lowercase" class="level3">
-<h3 class="anchored" data-anchor-id="lowercase">Lowercase</h3>
-<div id="526bda91" class="cell" data-execution_count="29">
+</div>
+<div id="fbdec24b" class="cell" data-execution_count="22">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.lower()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.upper()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>0        AMAL SILVA
+1       NADI PERERA
+2               NaN
+3    KAVI RATNAYAKE
+dtype: str</code></pre>
 </div>
-</section>
-<section id="uppercase" class="level3">
-<h3 class="anchored" data-anchor-id="uppercase">Uppercase</h3>
-<div id="17d6c663" class="cell" data-execution_count="30">
+</div>
+<div id="867a8c13" class="cell" data-execution_count="23">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.upper()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.<span class="bu">len</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>0    10.0
+1    11.0
+2     NaN
+3    14.0
+dtype: float64</code></pre>
 </div>
-</section>
-<section id="title-case" class="level3">
-<h3 class="anchored" data-anchor-id="title-case">Title Case</h3>
-<div id="64f1ee19" class="cell" data-execution_count="31">
+</div>
+<div id="a7c51616" class="cell" data-execution_count="24">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.title()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>pd.Series([<span class="st">" Amal "</span>, <span class="st">" Nadi "</span>]).<span class="bu">str</span>.strip()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<pre><code>0    Amal
+1    Nadi
+dtype: str</code></pre>
+</div>
 </div>
 </section>
-<section id="length" class="level3">
-<h3 class="anchored" data-anchor-id="length">Length</h3>
-<div id="4b428f59" class="cell" data-execution_count="32">
+<section id="searching-with-contains" class="level2">
+<h2 class="anchored" data-anchor-id="searching-with-contains">Searching with <code>contains()</code></h2>
+<p>Find every entry that includes a pattern — useful for filtering rows by a keyword.</p>
+<div id="12401b96" class="cell" data-execution_count="25">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.<span class="bu">len</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>orders <span class="op">=</span> pd.Series([<span class="st">"2 pens, 1 ruler"</span>, <span class="st">"3 notebooks"</span>, <span class="st">"1 eraser, 2 pens"</span>])</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>orders.<span class="bu">str</span>.contains(<span class="st">"pen"</span>, case<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<pre><code>0     True
+1    False
+2     True
+dtype: bool</code></pre>
+</div>
 </div>
 </section>
-<section id="remove-whitespace" class="level3">
-<h3 class="anchored" data-anchor-id="remove-whitespace">Remove Whitespace</h3>
-<div id="44a1c3f1" class="cell" data-execution_count="33">
+<section id="replacing-text" class="level2">
+<h2 class="anchored" data-anchor-id="replacing-text">Replacing Text</h2>
+<div id="791b8cbe" class="cell" data-execution_count="26">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>pd.Series([<span class="st">" hello "</span>, <span class="st">" world "</span>]).<span class="bu">str</span>.strip()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>orders.<span class="bu">str</span>.replace(<span class="st">"pen"</span>, <span class="st">"PEN"</span>, case<span class="op">=</span><span class="va">False</span>, regex<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<pre><code>0     2 PENs, 1 ruler
+1         3 notebooks
+2    1 eraser, 2 PENs
+dtype: str</code></pre>
+</div>
 </div>
 </section>
-</section>
-<section id="regular-expressions" class="level2">
-<h2 class="anchored" data-anchor-id="regular-expressions">Regular Expressions</h2>
-<section id="contains" class="level3">
-<h3 class="anchored" data-anchor-id="contains">Contains</h3>
-<p>Search for a pattern.</p>
-<div id="b0a17383" class="cell" data-execution_count="34">
+<section id="extracting-parts-of-text-with-regex" class="level2">
+<h2 class="anchored" data-anchor-id="extracting-parts-of-text-with-regex">Extracting Parts of Text with Regex</h2>
+<div id="497c0585" class="cell" data-execution_count="27">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.contains(</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a"</span>,</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    case<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    na<span class="op">=</span><span class="va">False</span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>contacts <span class="op">=</span> pd.Series([<span class="st">"Amal-0771234567"</span>, <span class="st">"Nadi-0719876543"</span>])</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>contacts.<span class="bu">str</span>.extract(<span class="vs">r"</span><span class="kw">(</span><span class="dv">\w</span><span class="op">+</span><span class="kw">)</span><span class="vs">-</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="27">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">0</th>
+<th data-quarto-table-cell-role="th">1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Amal</td>
+<td>0771234567</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Nadi</td>
+<td>0719876543</td>
+</tr>
+</tbody>
+</table>
+
 </div>
-</section>
-<section id="replace" class="level3">
-<h3 class="anchored" data-anchor-id="replace">Replace</h3>
-<p>Replace matching patterns.</p>
-<div id="39b82cc1" class="cell" data-execution_count="35">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>names.<span class="bu">str</span>.replace(</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a"</span>,</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"*"</span>,</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    regex<span class="op">=</span><span class="va">True</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
-</section>
-<section id="extract" class="level3">
-<h3 class="anchored" data-anchor-id="extract">Extract</h3>
-<p>Extract portions of text using regular expressions.</p>
-<div id="87543c92" class="cell" data-execution_count="36">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>emails <span class="op">=</span> pd.Series([</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"alice@gmail.com"</span>,</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"bob@yahoo.com"</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>emails.<span class="bu">str</span>.extract(</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"</span><span class="kw">(</span><span class="dv">.</span><span class="op">*</span><span class="kw">)</span><span class="vs">@</span><span class="kw">(</span><span class="dv">.</span><span class="op">*</span><span class="kw">)</span><span class="vs">"</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
-</section>
 </section>
 <section id="splitting-strings" class="level2">
 <h2 class="anchored" data-anchor-id="splitting-strings">Splitting Strings</h2>
-<div id="662f3e46" class="cell" data-execution_count="37">
+<div id="ccc32b38" class="cell" data-execution_count="28">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>pd.Series([</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"A-B-C"</span>,</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"D-E-F"</span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>]).<span class="bu">str</span>.split(<span class="st">"-"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>contacts.<span class="bu">str</span>.split(<span class="st">"-"</span>, expand<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="28">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">0</th>
+<th data-quarto-table-cell-role="th">1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Amal</td>
+<td>0771234567</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Nadi</td>
+<td>0719876543</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
 </div>
 </section>
 <section id="one-hot-encoding-with-get_dummies" class="level2">
 <h2 class="anchored" data-anchor-id="one-hot-encoding-with-get_dummies">One-Hot Encoding with <code>get_dummies()</code></h2>
-<div id="76b06450" class="cell" data-execution_count="38">
+<div id="52ce8469" class="cell" data-execution_count="29">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>pd.Series([</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"A|B"</span>,</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"B|C"</span>,</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"A|C"</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>]).<span class="bu">str</span>.get_dummies(<span class="st">"|"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>pd.Series([<span class="st">"pens|rulers"</span>, <span class="st">"notebooks"</span>, <span class="st">"pens|erasers"</span>]).<span class="bu">str</span>.get_dummies(<span class="st">"|"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="29">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">erasers</th>
+<th data-quarto-table-cell-role="th">notebooks</th>
+<th data-quarto-table-cell-role="th">pens</th>
+<th data-quarto-table-cell-role="th">rulers</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
 </div>
 </section>
+<section id="putting-it-together-tagging-inventory" class="level2">
+<h2 class="anchored" data-anchor-id="putting-it-together-tagging-inventory">Putting It Together: Tagging Inventory</h2>
+<p>Combine <code>contains()</code> with a list of keywords to flag which products appear in each order — a common first step before grouping or filtering further.</p>
+<div id="5559b211" class="cell" data-execution_count="30">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>order_text <span class="op">=</span> pd.Series([</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pens and rulers"</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"notebooks only"</span>,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pens, erasers, rulers"</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>items <span class="op">=</span> [<span class="st">"pens"</span>, <span class="st">"rulers"</span>, <span class="st">"notebooks"</span>, <span class="st">"erasers"</span>]</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>tags <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    item: order_text.<span class="bu">str</span>.contains(item)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> item <span class="kw">in</span> items</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>tags</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="30">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">pens</th>
+<th data-quarto-table-cell-role="th">rulers</th>
+<th data-quarto-table-cell-role="th">notebooks</th>
+<th data-quarto-table-cell-role="th">erasers</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </section>
-<section id="recipe-database-example" class="level1">
-<h1>Recipe Database Example</h1>
-<p>Suppose we have recipe data containing ingredient lists.</p>
-<div id="3d04a7bd" class="cell" data-execution_count="39">
+<section id="finding-orders-with-specific-items" class="level2">
+<h2 class="anchored" data-anchor-id="finding-orders-with-specific-items">Finding Orders with Specific Items</h2>
+<div id="39405ff5" class="cell" data-execution_count="31">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>recipes <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"name"</span>: [<span class="st">"Recipe1"</span>, <span class="st">"Recipe2"</span>, <span class="st">"Recipe3"</span>],</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ingredients"</span>: [</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"parsley paprika tarragon"</span>,</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"salt pepper oregano"</span>,</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"parsley paprika"</span></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>recipes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> tags[<span class="st">"pens"</span>] <span class="op">&amp;</span> tags[<span class="st">"rulers"</span>]</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>order_text[mask]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="31">
+<pre><code>0          pens and rulers
+2    pens, erasers, rulers
+dtype: str</code></pre>
 </div>
-<section id="creating-ingredient-indicators" class="level2">
-<h2 class="anchored" data-anchor-id="creating-ingredient-indicators">Creating Ingredient Indicators</h2>
-<div id="5ff73f47" class="cell" data-execution_count="40">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>spice_list <span class="op">=</span> [</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"parsley"</span>,</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"paprika"</span>,</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tarragon"</span>,</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"salt"</span>,</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pepper"</span></span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>spice_df <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    spice: recipes[<span class="st">"ingredients"</span>].<span class="bu">str</span>.contains(</span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>        spice,</span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>        case<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>        na<span class="op">=</span><span class="va">False</span></span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> spice <span class="kw">in</span> spice_list</span>
-<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>spice_df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
 </section>
-<section id="finding-recipes-with-specific-ingredients" class="level2">
-<h2 class="anchored" data-anchor-id="finding-recipes-with-specific-ingredients">Finding Recipes with Specific Ingredients</h2>
-<div id="9c06357e" class="cell" data-execution_count="41">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    spice_df[<span class="st">"parsley"</span>] <span class="op">&amp;</span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    spice_df[<span class="st">"paprika"</span>] <span class="op">&amp;</span></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    spice_df[<span class="st">"tarragon"</span>]</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>recipes.loc[mask, [<span class="st">"name"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
+<section id="quick-reference-1" class="level2">
+<h2 class="anchored" data-anchor-id="quick-reference-1">Quick Reference</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>.str.lower()</code> / <code>.str.upper()</code></td>
+<td>Change case of every entry</td>
+</tr>
+<tr class="even">
+<td><code>.str.strip()</code></td>
+<td>Remove leading/trailing whitespace</td>
+</tr>
+<tr class="odd">
+<td><code>.str.contains()</code></td>
+<td>Test for a pattern, returns <code>True</code>/<code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>.str.replace()</code></td>
+<td>Swap matching text for something else</td>
+</tr>
+<tr class="odd">
+<td><code>.str.extract()</code></td>
+<td>Pull out parts of text using a pattern</td>
+</tr>
+<tr class="even">
+<td><code>.str.split()</code></td>
+<td>Break text into pieces around a separator</td>
+</tr>
+<tr class="odd">
+<td><code>.str.get_dummies()</code></td>
+<td>Turn tags into one column per category</td>
+</tr>
+</tbody>
+</table>
+<hr>
 </section>
 </section>
 <section id="key-takeaways" class="level1">
-<h1>Key Takeaways</h1>
+<h1>🏆 Key Takeaways</h1>
 <section id="merge-join" class="level2">
-<h2 class="anchored" data-anchor-id="merge-join">Merge &amp; Join</h2>
+<h2 class="anchored" data-anchor-id="merge-join">🔗 Merge &amp; Join</h2>
 <ul>
-<li>Combines datasets using common keys.</li>
-<li>Supports one-to-one, many-to-one, and many-to-many joins.</li>
-<li><code>how=</code> controls inner, outer, left, and right joins.</li>
+<li>Combines tables using a shared column — works just like a SQL join.</li>
+<li>Supports one-to-one, many-to-one, and many-to-many matches.</li>
+<li><code>how=</code> (<code>inner</code>, <code>outer</code>, <code>left</code>, <code>right</code>) controls which unmatched rows survive.</li>
+<li>Use <code>left_on</code> / <code>right_on</code> when the shared column has different names in each table.</li>
 </ul>
 </section>
 <section id="groupby" class="level2">
-<h2 class="anchored" data-anchor-id="groupby">GroupBy</h2>
+<h2 class="anchored" data-anchor-id="groupby">📊 GroupBy</h2>
 <ul>
-<li>Implements the Split–Apply–Combine paradigm.</li>
-<li>Supports aggregation, filtering, transformation, and custom operations.</li>
+<li>Implements the split–apply–combine paradigm.</li>
+<li><code>agg()</code> runs several statistics at once; <code>filter()</code> drops entire groups that fail a test.</li>
+<li><code>transform()</code> keeps the original shape; <code>apply()</code> offers full flexibility.</li>
 </ul>
 </section>
 <section id="pivot-tables-1" class="level2">
-<h2 class="anchored" data-anchor-id="pivot-tables-1">Pivot Tables</h2>
+<h2 class="anchored" data-anchor-id="pivot-tables-1">🧩 Pivot Tables</h2>
 <ul>
-<li>Provide concise multidimensional summaries.</li>
-<li>Combine grouping and aggregation in a single operation.</li>
-<li>Support margins and missing-value handling.</li>
+<li>A faster, more readable alternative to <code>groupby()</code> + <code>unstack()</code>.</li>
+<li><code>margins=True</code> adds row/column totals; <code>fill_value=0</code> cleans up empty cells.</li>
+<li>Supports grouping by multiple variables at once.</li>
 </ul>
 </section>
 <section id="string-operations" class="level2">
-<h2 class="anchored" data-anchor-id="string-operations">String Operations</h2>
+<h2 class="anchored" data-anchor-id="string-operations">✂️ String Operations</h2>
 <ul>
-<li><code>.str</code> enables vectorized text processing.</li>
-<li>Supports built-in string methods and regular expressions.</li>
-<li>Handles missing values automatically.</li>
-<li><code>get_dummies()</code> converts categorical text into indicator variables.</li>
+<li>The <code>.str</code> accessor applies text operations across a whole column, skipping missing values.</li>
+<li><code>contains()</code>, <code>split()</code>, and <code>extract()</code> turn messy text into structured, analyzable columns.</li>
+<li><code>get_dummies()</code> converts categorical text tags into indicator columns.</li>
 </ul>
 
 
@@ -1538,4 +2382,5 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>
