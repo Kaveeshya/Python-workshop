@@ -59,6 +59,7 @@ format:
     css:
       - styles (1).css
       - stylesnew10.css
+      - styles.css
     theme: flatly
     toc: true
     toc-location: right
