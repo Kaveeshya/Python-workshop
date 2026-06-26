@@ -13,7 +13,7 @@ format:
     code-block-border-left: "#4e79a7"
     df-print: kable
 execute:
-  eval: false
+  eval: true
   echo: true
 ---
 
