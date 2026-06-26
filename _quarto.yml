@@ -42,6 +42,8 @@ website:
             text: "Matplotlib"
           - href: matplotlib_part2.qmd
             text: "Data Visualization using Matplotlib"
+          - href: matplotlib-part3.qmd
+            text: Seaborn for Statistical Data Visualization
           
 
       - section: "📉 Statistics & Modelling"
