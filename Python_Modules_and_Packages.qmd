@@ -154,7 +154,7 @@ import seaborn
 ```
 
 ```{python}
-!pip install seaborn
+
 
 import seaborn
 
