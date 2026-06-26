@@ -9,12 +9,9 @@ format:
     toc-title: "Session Outline"
     toc-location: right
     number-sections: true
-    theme: cosmo
-    highlight-style: github
     code-block-bg: true
     code-block-border-left: "#4e79a7"
     df-print: kable
-    self-contained: true
 execute:
   eval: false
   echo: true
