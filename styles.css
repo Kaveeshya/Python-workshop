@@ -205,12 +205,13 @@ table:not(.dataframe) tbody tr:hover {
 }
 
 /* code spans inside table cells */
-table td code {
-  background-color: var(--navy);
-  color: #FFE9A8;
+table td code, table th code {
+  background-color: var(--navy) !important;
+  color: #FFFFFF !important;
   padding: 2px 6px;
   border-radius: 5px;
   font-size: 0.88em;
+  font-weight: 600;
 }
 
 /* ===================== BLOCKQUOTES / TIPS ===================== */
