@@ -272,3 +272,8 @@ strong {
   color: #5A4500;
   margin-bottom: 1.3rem;
 }
+.cell-output pre,
+.cell-output-stdout pre {
+  color: #1F3A5F !important;
+  font-weight: 600 !important;
+}
