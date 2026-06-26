@@ -2,3 +2,8 @@ pyyaml
 jupyter
 nbformat
 ipykernel
+pandas
+numpy
+matplotlib
+seaborn
+scipy
