@@ -85,7 +85,7 @@ print(f"\nTotal months: {len(ts_data)}  |  Train: {len(train)}  |  Test: {len(te
 
 ```{r}
 
-if (!require(tseries)) install.packages("tseries")
+if (!require(tseries)) install.packages("tseries", repos = "https://cloud.r-project.org")
 library(tseries)
 
 data("AirPassengers")
