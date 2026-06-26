@@ -273,8 +273,11 @@ strong {
   color: #5A4500;
   margin-bottom: 1.3rem;
 }
-.cell-output *,
-.cell-output-stdout * {
+.cell-output pre *,
+.cell-output-stdout pre *,
+.cell-output pre,
+.cell-output-stdout pre {
   color: #1F3A5F !important;
   font-weight: 600 !important;
+  background-color: transparent !important;
 }
